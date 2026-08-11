@@ -1,0 +1,40 @@
+# Prosjektnavn låst så compose-prosjektet (containere/volumer) overlever
+# at mappen flyttes eller får nytt navn.
+name: humhub-poc
+
+services:
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: humhub
+      MARIADB_USER: humhub
+      MARIADB_PASSWORD: humhub-poc-db-2026
+      MARIADB_ROOT_PASSWORD: humhub-poc-root-2026
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  humhub:
+    image: humhub/humhub:1.18.4
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      SERVER_NAME: ":80"
+      HUMHUB_CONFIG__COMPONENTS__DB__DSN: "mysql:host=db;dbname=humhub"
+      HUMHUB_CONFIG__COMPONENTS__DB__USERNAME: humhub
+      HUMHUB_CONFIG__COMPONENTS__DB__PASSWORD: humhub-poc-db-2026
+    volumes:
+      - humhub-data:/data
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:
+  humhub-data:

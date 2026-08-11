@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="nb">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selvbetjening for den frivillige delen — Dataforeningen</title>
+<style>
+  /* Bevisst enkelt-tema (distribuerbart deck): alle farger males eksplisitt. */
+  * { box-sizing: border-box; margin: 0; }
+
+  :root {
+    --paper: #F7F9FA;
+    --surface: #FFFFFF;
+    --ink: #1B2733;
+    --muted: #5B6B7A;
+    --accent: #275D8B;
+    --accent-soft: #E3EDF4;
+    --border: #D8E0E6;
+    --navy: #142B3F;
+    --navy-ink: #E8EEF3;
+    --navy-muted: #9DB2C2;
+    --good-ink: #256B43; --good-soft: #DFF0E5;
+    --warn-ink: #8A5E14; --warn-soft: #F5EBD6;
+    --bad-ink: #A03D31;  --bad-soft: #F6E3DF;
+  }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55;
+    scroll-snap-type: y proximity;
+  }
+
+  .slide {
+    min-height: 100svh;
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: var(--paper);
+    counter-increment: slide;
+    padding: 3.5rem 1.5rem 4rem;
+  }
+  .slide:nth-child(even) { background: #F0F4F6; }
+  .slide.dark { background: var(--navy); color: var(--navy-ink); }
+
+  .wrap { max-width: 60rem; width: 100%; }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+  .dark .eyebrow { color: #8FB8DA; }
+
+  h1, h2 {
+    font-family: Charter, "Bitstream Charter", Georgia, "Times New Roman", serif;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+  h1 { font-size: clamp(2.2rem, 5.5vw, 3.4rem); font-weight: 700; }
+  h2 { font-size: clamp(1.7rem, 4vw, 2.4rem); font-weight: 700; margin-bottom: 1.4rem; }
+
+  .sub { font-size: 1.2rem; color: var(--navy-muted); margin-top: 1rem; max-width: 38rem; }
+
+  p, li { font-size: 1.02rem; }
+  ul, ol { margin: 0.4rem 0 0 1.3rem; max-width: 44rem; }
+  li { margin: 0.45rem 0; }
+  .lede { font-size: 1.15rem; max-width: 44rem; margin-bottom: 1rem; }
+  .note { color: var(--muted); font-size: 0.85rem; margin-top: 1.4rem; }
+  .dark .note { color: var(--navy-muted); }
+  strong { font-weight: 650; }
+
+  .slidefoot {
+    position: absolute;
+    bottom: 1.1rem;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1.8rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+  .dark .slidefoot { color: var(--navy-muted); }
+  .slidefoot .num::before { content: counter(slide, decimal-leading-zero) " / 12"; }
+
+  /* Stat-tiles: tall i blekk, etikett i dempet — aldri farge som eneste bærer */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    padding: 1.2rem 1.3rem;
+  }
+  .stat .val {
+    font-size: 2.4rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    font-family: Charter, Georgia, serif;
+  }
+  .stat .lbl { color: var(--muted); font-size: 0.85rem; margin-top: 0.3rem; }
+
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    padding: 1.1rem 1.3rem;
+  }
+  .card h3 { font-size: 1.02rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .card p { font-size: 0.92rem; color: var(--muted); }
+  .card .k { color: var(--accent); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.08em; }
+
+  .chip {
+    display: inline-block;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.12rem 0.65rem;
+    vertical-align: middle;
+  }
+  .chip.good { background: var(--good-soft); color: var(--good-ink); }
+  .chip.warn { background: var(--warn-soft); color: var(--warn-ink); }
+  .chip.bad  { background: var(--bad-soft);  color: var(--bad-ink); }
+
+  blockquote {
+    font-family: Charter, Georgia, serif;
+    font-size: 1.45rem;
+    line-height: 1.4;
+    border-left: 4px solid var(--accent);
+    padding-left: 1.4rem;
+    margin: 1.4rem 0 0.8rem;
+    max-width: 42rem;
+    text-wrap: balance;
+  }
+  cite { display: block; font-style: normal; color: var(--muted); font-size: 0.9rem; margin-top: 0.7rem; }
+
+  .diagram { display: flex; flex-direction: column; gap: 0.45rem; margin: 1.4rem 0; max-width: 46rem; }
+  .diagram .row { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+  .diagram .node {
+    flex: 1 1 12rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.55rem;
+    padding: 0.75rem 1rem;
+  }
+  .diagram .node.hero { border-color: var(--accent); background: var(--accent-soft); }
+  .diagram .node strong { display: block; font-size: 0.95rem; }
+  .diagram .node span { font-size: 0.8rem; color: var(--muted); }
+  .diagram .link { text-align: center; color: var(--muted); font-size: 0.8rem; }
+
+  /* Mini-mock av forslagpanelet fra demoen */
+  .mock {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    max-width: 21rem;
+    box-shadow: 0 8px 24px rgba(20, 43, 63, 0.10);
+  }
+  .mock .head { padding: 0.7rem 1rem 0.5rem; border-bottom: 1px solid var(--border); }
+  .mock .head strong { font-size: 0.95rem; }
+  .mock .head span { display: block; font-size: 0.72rem; color: var(--muted); }
+  .mock .row { padding: 0.6rem 1rem; }
+  .mock .row + .row { border-top: 1px solid #EEF2F5; }
+  .mock .row a { color: var(--accent); font-weight: 650; font-size: 0.92rem; text-decoration: none; }
+  .mock .row .meta { font-size: 0.75rem; color: var(--muted); }
+
+  .split { display: flex; gap: 2.5rem; flex-wrap: wrap; align-items: flex-start; }
+  .split > div:first-child { flex: 1 1 24rem; }
+
+  table { border-collapse: collapse; width: 100%; max-width: 46rem; font-size: 0.95rem; margin-top: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 0.5rem; }
+  th, td { text-align: left; padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  thead th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+  tbody tr:last-child td { border-bottom: none; }
+
+  a { color: var(--accent); }
+  .dark a { color: #8FB8DA; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .hint { position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%); color: var(--navy-muted); font-size: 0.8rem; }
+
+  .steps { counter-reset: step; margin-top: 1.2rem; max-width: 44rem; }
+  .step { display: flex; gap: 1rem; margin: 1rem 0; }
+  .step::before {
+    counter-increment: step;
+    content: counter(step);
+    flex: 0 0 2rem; height: 2rem;
+    display: flex; align-items: center; justify-content: center;
+    background: #8FB8DA; color: var(--navy);
+    border-radius: 999px; font-weight: 700;
+  }
+  .step div strong { display: block; }
+  .step div span { color: var(--navy-muted); font-size: 0.92rem; }
+
+  @media print {
+    body { scroll-snap-type: none; background: #FFFFFF; }
+    .slide { min-height: auto; page-break-after: always; padding: 2rem; }
+    .hint { display: none; }
+  }
+</style>
+
+<div class="deck">
+
+<!-- 1 · Tittel -->
+<section class="slide dark">
+  <div class="wrap">
+    <p class="eyebrow">Beslutningsunderlag · 11. august 2026</p>
+    <h1>Selvbetjening for den frivillige delen</h1>
+    <p class="sub">Medlemsportal for Dataforeningen — utredning, veivalg og en kjørende demo på én dag.</p>
+  </div>
+  <p class="hint">Bla eller bruk piltastene ↓</p>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+<!-- 2 · Oppdraget -->
+<section class="slide">
+  <div class="wrap">
+    <p class="eyebrow">Oppdraget</p>
+    <h2>Gjøre det enkelt å engasjere seg</h2>
+    <p class="lede">Medlemmene skal kunne administrere sin egen deltakelse i foreningens frivillige del — uten å gå veien om sekretariatet.</p>
+    <ul>
+      <li><strong>Finne</strong> faggrupper og nettverk på tvers av regioner</li>
+      <li><strong>Melde seg inn og ut</strong> av grupper selv</li>
+      <li><strong>Administrere egne valg</strong> — profil, interesser og varsler</li>
+      <li><strong>Få dynamiske forslag</strong> til grupper basert på egne interesser</li>
+      <li><strong>La fagstyrene styre egne grupper</strong> — godkjenne medlemmer, nå ut, publisere</li>
+    </ul>
+  </div>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+<!-- 3 · I dag -->
+<section class="slide">
+  <div class="wrap">
+    <p class="eyebrow">Situasjonen i dag</p>
+    <h2>Engasjementet finnes — selvbetjeningen mangler</h2>
+    <div class="stats">
+      <div class="stat"><div class="val">38</div><div class="lbl">faggrupper med egne sider på dataforeningen.no</div></div>
+      <div class="stat"><div class="val">0</div><div class="lbl">av dem har en «bli med»-knapp</div></div>
+      <div class="stat"><div class="val">3</div><div class="lbl">regioner: Sør-Øst, Midt-Nord og Vest</div></div>
+      <div class="stat"><div class="val">5 000+</div><div class="lbl">medlemmer fra 1 300+ virksomheter</div></div>
+    </div>
+    <ul>
+      <li>Deltakelse skjer i praksis via arrangementspåmelding og nyhetsbrev — det finnes ingen «Min side»</li>
+      <li>Nye grupper startes ved å sende e-post; medlemsfordeler distribueres manuelt</li>
+      <li>Vedtektene (2025) krever allerede elektronisk stemmegivning «i foreningens digitale løsning»</li>
+    </ul>
+  </div>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+<!-- 4 · Timing -->
+<section class="slide">
+  <div class="wrap">
+    <p class="eyebrow">Timingen er riktig</p>
+    <h2>Foreningen har allerede lovet dette</h2>
+    <blockquote>«Vi jobber med implementering av nytt medlemssystem, og etter hvert lanserer vi en selvbetjeningsportal som skal gjøre det enklere å delta, engasjere seg og skape aktivitet.»
+      <cite>Dataforeningens nyhetsbrev, mars 2026</cite>
+    </blockquote>
+    <p class="lede">Innmeldingen kjører i dag på medlemssystemet StyreWeb. Utredningens klare råd: <strong>bygg videre på det påbegynte — ikke parallelt med det.</strong> Første avklaring er derfor intern: hva er den annonserte portalen, og hvilket API tilbyr StyreWeb?</p>
+  </div>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+<!-- 5 · Krav -->
+<section class="slide">
+  <div class="wrap">
+    <p class="eyebrow">Kravbildet</p>
+    <h2>Seks krav til løsningen</h2>
+    <div class="grid2">
+      <div class="card"><span class="k">K1</span><h3>Gruppeoppdagelse</h3><p>Bla og søk i alle faggrupper på tvers av regioner</p></div>
+      <div class="card"><span class="k">K2</span><h3>Selvbetjent inn- og utmelding</h3><p>Åpne, søknadsbaserte og invitasjonsbaserte grupper</p></div>
+      <div class="card"><span class="k">K3</span><h3>Egen profil og valg</h3><p>Kontaktinfo, interesser, samtykker og varsler</p></div>
+      <div class="card"><span class="k">K4</span><h3>Interesser → forslag</h3><p>Kartlagte ønsker gir dynamiske gruppeforslag</p></div>
+      <div class="card"><span class="k">K5</span><h3>Gruppelederadministrasjon</h3><p>Fagstyrene godkjenner, publiserer og når sine medlemmer</p></div>
+      <div class="card"><span class="k">K6</span><h3>Integrasjon</h3><p>Medlemsregisteret forblir master; sameksistens med Microsoft 365</p></div>
+    </div>
+    <p class="note">I tillegg: elektronisk stemmegivning ved regionale årsmøter — allerede vedtektsfestet (§6.4).</p>
+  </div>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+<!-- 6 · Arkitektur -->
+<section class="slide">
+  <div class="wrap">
+    <p class="eyebrow">Arkitekturprinsippet</p>
+    <h2>Et tynt lag oppå det foreningen har</h2>
+    <div class="diagram" role="img" aria-label="Medlemmer og fagstyrer logger inn i portalen; portalen synkroniserer med StyreWeb og henter innhold fra Microsoft 365">
+      <div class="row">
+        <div class="node"><strong>Medlemmer</strong><span>Innlogging uten M365-konto — gratis under 50 000 brukere/mnd</span></div>
+        <div class="node"><strong>Fagstyrer og administrasjon</strong><span>Samme innlogging, utvidede roller</span></div>
+      </div>
+      <div class="link">↓</div>
+      <div class="row">
+        <div class="node hero"><strong>Selvbetjeningsportalen</strong><span>Gruppekatalog · innmelding · interesser og forslag · gruppelederpanel · (e-valg)</span></div>
+      </div>
+      <div class="link">↕ synkronisering</div>
+      <div class="row">
+        <div class="node"><strong>StyreWeb</strong><span>Forblir master for medlemskap og betaling</span></div>
+        <div class="node"><strong>Microsoft 365</strong><span>Dokumenter og kalendere hentes automatisk</span></div>
+      </div>
+    </div>
+    <p>Portalen eier bare det som mangler i dag. Ingen migrering, ingen ny betalingsløsning, ingen kopi av medlemsregisteret som «ny sannhet».</p>
+  </div>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+<!-- 7 · Strategier -->
+<section class="slide">
+  <div class="wrap">
+    <p class="eyebrow">Veivalget</p>
+    <h2>Tre veier — valget avgjøres av API-avklaringen</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>A · StyreWeb/Gnist som den er <span class="chip warn">Basis</span></h3>
+        <p>Kommer uansett og koster ingenting — men dekker ikke gruppeoppdagelse, interesseforslag eller fagstyrenes behov. Utilstrekkelig alene.</p>
+      </div>
+      <div class="card">
+        <h3>B · Tynn portal på StyreWebs API <span class="chip good">Anbefalt hvis API finnes</span></h3>
+        <p>Minst å bygge og vedlikeholde. Forutsetter API-avtale med leverandøren — omfang og pris er ikke offentlig dokumentert.</p>
+      </div>
+      <div class="card">
+        <h3>C · Plattform med synkronisering <span class="chip good">Raskest til funksjoner</span></h3>
+        <p>Open source-plattform gir gruppekatalog, innmeldingsflyt og lederroller ferdig — mot noe mer drift og synk mot registeret.</p>
+      </div>
+      <div class="card">
+        <h3>Felles for B og C</h3>
+        <p>StyreWeb forblir master. Forslagsmotoren (K4) finnes ikke som hyllevare noe sted og er en liten egenutvikling — 1–2 uker — uansett vei.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+<!-- 8 · Plattform -->
+<section class="slide">
+  <div class="wrap">
+    <p class="eyebrow">Plattformvalget</p>
+    <h2>HumHub vant vurderingen</h2>
+    <p class="lede">Fem tilnærminger ble målt mot de seks kravene. HumHub — open source, brukt av en rekke europeiske foreninger — dekker fire av seks <em>ferdig ut av boksen</em>:</p>
+    <ul>
+      <li>Grupperom med åpen, søknadsbasert eller invitasjonsbasert innmelding (K1, K2)</li>
+      <li>Per-gruppe-roller med godkjenningskø for fagstyrene (K5)</li>
+      <li>Selvbetjent profil og varslingsvalg, norsk bokmål i kjernen (K3)</li>
+      <li>Ferdig REST-API for synkronisering mot medlemsregisteret (K6)</li>
+    </ul>
+    <p style="margin-top:0.8rem">Alternativene falt på tyngre drift (Open Social/Drupal), ufullstendig norsk (WordPress + BuddyPress), feil fasong (Discourse) eller varig utvikleravhengighet (full skreddersøm). Kontantkostnad: <strong>under ca. 200 kr/mnd</strong> i infrastruktur.</p>
+  </div>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+<!-- 9 · Demo -->
+<section class="slide">
+  <div class="wrap">
+    <p class="eyebrow">Proof of concept</p>
+    <h2>Demoen kjører allerede</h2>
+    <div class="split">
+      <div>
+        <p class="lede">Satt opp på én dag, uten lisenskostnader:</p>
+        <ul>
+          <li>Ni faggrupper fra alle tre regioner, med ulike innmeldingspolicyer</li>
+          <li>Selvbetjent innmelding og søknadskø som fagstyret godkjenner</li>
+          <li>Interessefelt på profilen — og et <strong>egenutviklet forslagspanel</strong> som matcher interesser mot grupper, per medlem</li>
+          <li>Lukket styrerom som er usynlig for ikke-medlemmer</li>
+        </ul>
+        <p class="note">Demoen kjører internt og vises på forespørsel. Den beviser kravene K1–K5 i praksis; neste byggekloss er innlogging og registersynk (K6).</p>
+      </div>
+      <div class="mock" role="img" aria-label="Skisse av forslagspanelet fra demoen">
+        <div class="head"><strong>Forslag til deg</strong><span>basert på interessene i profilen din</span></div>
+        <div class="row"><a>BI &amp; Analytics (Sør-Øst)</a><div class="meta">Treff: dataanalyse · <span class="chip good">Åpen</span></div></div>
+        <div class="row"><a>IT-sikkerhet (Vest)</a><div class="meta">Treff: sikkerhet · <span class="chip warn">Søknad</span></div></div>
+        <div class="row"><a>Skytjenester (Sør-Øst)</a><div class="meta">Treff: sky · <span class="chip good">Åpen</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+<!-- 10 · Økonomi -->
+<section class="slide">
+  <div class="wrap">
+    <p class="eyebrow">Økonomi</p>
+    <h2>Kontantkostnaden er marginal</h2>
+    <div class="stats">
+      <div class="stat"><div class="val">0 kr</div><div class="lbl">programvarelisenser (open source)</div></div>
+      <div class="stat"><div class="val">0 kr</div><div class="lbl">innlogging for medlemmene — gratis under 50 000 brukere/mnd</div></div>
+      <div class="stat"><div class="val">≈200 kr</div><div class="lbl">per måned i infrastruktur (EU/EØS-hosting)</div></div>
+      <div class="stat"><div class="val">$2 000</div><div class="lbl">per år i Azure-tilskudd for ideelle — kan dekke alt</div></div>
+    </div>
+    <p class="lede">Den reelle kostnaden er <strong>timer, ikke kroner</strong>: byggeinnsats og løpende vedlikehold. Derfor er anbefalingen en løsning med lav driftsbyrde og minst mulig egenutvikling — ikke den teknisk mest ambisiøse.</p>
+    <p class="note">GDPR er håndterbar: all hosting i EU/EØS, Microsofts EU Data Boundary er fullført, og databehandleravtaler inngås uansett valg.</p>
+  </div>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+<!-- 11 · Risiko -->
+<section class="slide">
+  <div class="wrap">
+    <p class="eyebrow">Risiko og avklaringer</p>
+    <h2>Fire ting må avklares før veien velges</h2>
+    <table>
+      <thead><tr><th>Avklaring</th><th>Hvorfor det haster</th></tr></thead>
+      <tbody>
+        <tr><td><strong>StyreWebs API</strong> — finnes det, hva dekker det, hva koster avtalen?</td><td>Avgjør valget mellom vei B og C</td></tr>
+        <tr><td><strong>Status for den annonserte portalen</strong> — Gnist-utrulling eller eget bygg?</td><td>Unngå to parallelle portalprosjekter</td></tr>
+        <tr><td><strong>Gruppemodellen i StyreWeb</strong> — kan ett medlem ha mange gruppemedlemskap med selvbetjent inn/ut?</td><td>Bestemmer hvor synkroniseringen må bære</td></tr>
+        <tr><td><strong>Eierskap og vedlikehold</strong> — hvem forvalter portalen over tid?</td><td>Vedlikeholdstimer er den reelle kostnaden</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+<!-- 12 · Anbefaling -->
+<section class="slide dark">
+  <div class="wrap">
+    <p class="eyebrow">Anbefaling</p>
+    <h2>Neste steg</h2>
+    <div class="steps">
+      <div class="step"><div><strong>Avklar internt og med leverandøren</strong><span>Portalprosjektets status og StyreWebs API — spørsmålsliste foreligger</span></div></div>
+      <div class="step"><div><strong>Forankre kravene</strong><span>K1–K6 pluss e-valg, hos administrasjonen, et par fagstyrer og regionstyrene</span></div></div>
+      <div class="step"><div><strong>Utvid demoen til pilot</strong><span>3–5 frivillige faggrupper, ekte innlogging, enkel synk fra registeret — lav kostnad, konkret læring</span></div></div>
+      <div class="step"><div><strong>Beslutt veien og skaler</strong><span>Tynn portal på API eller plattform med synk — med e-valg klart til årsmøtene i mars</span></div></div>
+    </div>
+    <p class="note">Grunnlag: fullstendig researchrapport med kildehenvisninger, plattformvurdering og dag 2-sjekkliste (deles på forespørsel), samt kjørende demo.</p>
+  </div>
+  <div class="slidefoot"><span>Dataforeningen · medlemsportal</span><span class="num"></span></div>
+</section>
+
+</div>
+
+<script>
+  (function () {
+    var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+    function current() {
+      var mid = window.scrollY + window.innerHeight / 2;
+      for (var i = slides.length - 1; i >= 0; i--) {
+        if (slides[i].offsetTop <= mid) return i;
+      }
+      return 0;
+    }
+    function go(i) {
+      if (i < 0 || i >= slides.length) return;
+      slides[i].scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(current() + 1); }
+      else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current() - 1); }
+      else if (e.key === 'Home') { e.preventDefault(); go(0); }
+      else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+    });
+  })();
+</script>
+
+</html>

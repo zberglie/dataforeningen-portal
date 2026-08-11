@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="nb">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dataforeningen: selvbetjeningsportal og intranett — researchrapport</title>
+<style>
+  :root {
+    --bg: #F5F7F9;
+    --surface: #FFFFFF;
+    --ink: #1B2733;
+    --muted: #5B6B7A;
+    --accent: #275D8B;
+    --accent-soft: #E3EDF4;
+    --border: #DCE3E9;
+    --good-ink: #256B43;
+    --good-soft: #DFF0E5;
+    --warn-ink: #8A5E14;
+    --warn-soft: #F5EBD6;
+    --bad-ink: #A03D31;
+    --bad-soft: #F6E3DF;
+    --code-bg: #EDF1F4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131A20;
+      --surface: #1B242C;
+      --ink: #E4EAEF;
+      --muted: #94A4B1;
+      --accent: #7FB2DC;
+      --accent-soft: #1E2E3B;
+      --border: #2B3742;
+      --good-ink: #7FC79B;
+      --good-soft: #1D2F26;
+      --warn-ink: #D9AC62;
+      --warn-soft: #32291A;
+      --bad-ink: #E08A7E;
+      --bad-soft: #33211E;
+      --code-bg: #232E38;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #131A20;
+    --surface: #1B242C;
+    --ink: #E4EAEF;
+    --muted: #94A4B1;
+    --accent: #7FB2DC;
+    --accent-soft: #1E2E3B;
+    --border: #2B3742;
+    --good-ink: #7FC79B;
+    --good-soft: #1D2F26;
+    --warn-ink: #D9AC62;
+    --warn-soft: #32291A;
+    --bad-ink: #E08A7E;
+    --bad-soft: #33211E;
+    --code-bg: #232E38;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    padding: 3rem 1.25rem 4rem;
+  }
+
+  .page {
+    max-width: 52rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+  }
+
+  h1, h2, h3 {
+    font-family: Charter, "Bitstream Charter", Georgia, "Times New Roman", serif;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  h1 { font-size: 2.2rem; font-weight: 700; }
+  h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.15rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+
+  .eyebrow {
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  .lead { font-size: 1.1rem; color: var(--muted); margin-top: 0.75rem; max-width: 44rem; }
+  .meta { color: var(--muted); font-size: 0.85rem; margin-top: 1rem; }
+
+  p { margin: 0.6rem 0; max-width: 44rem; }
+  section > p:first-of-type { margin-top: 0; }
+  ul, ol { margin: 0.6rem 0 0.6rem 1.4rem; max-width: 42rem; }
+  li { margin: 0.3rem 0; }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  strong { font-weight: 650; }
+  code {
+    font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+    font-size: 0.85em;
+    background: var(--code-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 0.25rem;
+  }
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 0.25rem 0 0.25rem 1rem;
+    margin: 0.75rem 0;
+    color: var(--muted);
+    font-style: italic;
+    max-width: 42rem;
+  }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.1rem 1.4rem;
+  }
+  .toc strong { display: block; margin-bottom: 0.4rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+  .toc ol { margin: 0 0 0 1.2rem; columns: 2; column-gap: 2rem; }
+  .toc li { margin: 0.15rem 0; break-inside: avoid; }
+  .toc a { text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  @media (max-width: 40rem) { .toc ol { columns: 1; } }
+
+  .box {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    max-width: 46rem;
+  }
+  .box.warn { background: var(--warn-soft); border-left-color: var(--warn-ink); }
+  .box p, .box ul, .box ol { max-width: none; }
+  .box .boxtitle { font-weight: 700; display: block; margin-bottom: 0.25rem; }
+
+  .tablewrap { overflow-x: auto; margin: 1rem 0; border: 1px solid var(--border); border-radius: 0.5rem; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  th, td { text-align: left; padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  thead th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); background: var(--bg); white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: none; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .chip {
+    display: inline-block;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 650;
+    padding: 0.1rem 0.6rem;
+    white-space: nowrap;
+  }
+  .chip.good { background: var(--good-soft); color: var(--good-ink); }
+  .chip.warn { background: var(--warn-soft); color: var(--warn-ink); }
+  .chip.bad  { background: var(--bad-soft);  color: var(--bad-ink); }
+
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin: 1rem 0;
+    max-width: 46rem;
+  }
+  .diagram .row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .diagram .node {
+    flex: 1 1 12rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.7rem 0.9rem;
+    background: var(--bg);
+  }
+  .diagram .node.hero { border-color: var(--accent); background: var(--accent-soft); }
+  .diagram .node strong { display: block; font-size: 0.9rem; }
+  .diagram .node span { font-size: 0.78rem; color: var(--muted); }
+  .diagram .link { text-align: center; color: var(--muted); font-size: 0.78rem; padding: 0.1rem 0; }
+
+  .sources { font-size: 0.88rem; }
+  .sources h3 { margin-top: 1.25rem; }
+  .sources ul { margin-left: 1.2rem; }
+
+  footer { color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--border); padding-top: 1.25rem; }
+</style>
+
+<div class="page">
+
+<header>
+  <p class="eyebrow">Researchrapport v2 · 11. august 2026</p>
+  <h1>Selvbetjeningsportal for Dataforeningen</h1>
+  <p class="lead">Hvordan gi medlemmene selvadministrasjon av faggrupper, egne valg og interessebaserte forslag — bygget rundt systemene Dataforeningen faktisk har, med open source der det gir mening.</p>
+  <p class="meta"><strong>Versjon 2:</strong> Rapporten er omskrevet etter en viktig avklaring: hovedmålgruppen er <em>medlemmene</em>, og behovet er selvadministrasjon av den frivillige delen (finne og melde seg inn/ut av grupper, administrere egne valg, få forslag basert på interesser) — ikke primært et publiserings-intranett. Ny research omfatter dataforeningen.no (organisasjon, vedtekter, synlig teknologi), det norske medlemssystem-markedet og en plattformvurdering målt mot de konkrete behovene. Funnene fra v1 (CMS og Microsoft 365-integrasjon) er beholdt som bakgrunnskapitler. Alle kilder verifisert 11. august 2026.</p>
+</header>
+
+<nav class="toc" aria-label="Innhold">
+  <strong>Innhold</strong>
+  <ol>
+    <li><a href="#sammendrag">Sammendrag og anbefaling</a></li>
+    <li><a href="#dnd">Dataforeningen i dag</a></li>
+    <li><a href="#krav">Kravbildet for portalen</a></li>
+    <li><a href="#strategi">Tre strategier — og valget mellom dem</a></li>
+    <li><a href="#plattform">Plattformvurderingen</a></li>
+    <li><a href="#veikart">Anbefalt vei videre + dag 2-sjekkliste</a></li>
+    <li><a href="#identitet">Bakgrunn: innlogging og M365-integrasjon</a></li>
+    <li><a href="#cms">Bakgrunn: CMS-researchen (v1)</a></li>
+    <li><a href="#kilder">Sentrale kilder</a></li>
+  </ol>
+</nav>
+
+<section id="sammendrag">
+  <h2>1. Sammendrag og anbefaling</h2>
+  <div class="box warn">
+    <span class="boxtitle">Viktigste funn: Dataforeningen er allerede i gang</span>
+    <p>I en nyhetsartikkel fra 27. mars 2026 skriver foreningen: <em>«Vi jobber med implementering av nytt medlemssystem, og etter hvert lanserer vi en selvbetjeningsportal som skal gjøre det enklere å delta, engasjere seg og skape aktivitet.»</em> (<a href="https://dataforeningen.no/aktuelt/vaaren-er-i-gang-og-det-spirer-og-gror-i-dataforeningen" rel="noopener">kilde</a>). Innmeldingen kjører i dag på <strong>StyreWeb</strong> (Effektus AS), og mye tyder på at StyreWeb <em>er</em> det nye medlemssystemet, med medlemsappen <strong>Gnist</strong> som planlagt medlemsflate. Dag&nbsp;2-oppgave nummer én er derfor ikke å velge teknologi, men å avklare internt hvor dette prosjektet står og hva den annonserte portalen faktisk skal være.</p>
+  </div>
+  <ul>
+    <li><strong>Gapet er reelt og ligger akkurat der oppdraget peker:</strong> de 38 faggruppesidene på dataforeningen.no har ingen «bli med i gruppen»-knapp; deltakelse skjer i praksis via arrangementspåmelding (Checkin.no) og nyhetsbrev. StyreWeb/Gnist dekker profil, faktura og medlemskort — men neppe gruppekatalog, interessekartlegging og dynamiske gruppeforslag. Det er dette en selvbetjeningsportal må tilføre.</li>
+    <li><strong>Anbefalt arkitektur:</strong> StyreWeb forblir kilden til sannhet for medlemskap og betaling. Portalen bygges som et <em>tynt lag oppå</em> — enten som skreddersydd tynn portal mot StyreWebs API (hvis det finnes; ikke offentlig dokumentert) eller på plattformen <strong>HumHub</strong> med synkronisering mot registeret. Interessematching/forslag er uansett en liten egenutviklet komponent (dager til to uker) — ingen hyllevare dekker det.</li>
+    <li><strong>Beste open source-plattform for behovet er HumHub</strong> — spaces passer én-til-én med faggrupper (åpne/søknads-/invitasjonsbaserte medlemskap), gruppeledere får eget administrasjonspanel, medlemmer styrer egen profil og varsler, REST-API for registersynk følger med, og norsk bokmål ligger i kjernen. WordPress + WPO365 (v1-anbefalingen) står fortsatt som beste valg for <em>publiserings</em>-delen, men er nest-best for selvbetjening.</li>
+    <li><strong>Innlogging er løst og gratis:</strong> Entra External ID koster ingenting under 50 000 aktive brukere/mnd — DNDs 5 000–8 500 medlemmer er langt innenfor. Vipps Login brukes allerede i StyreWeb-innmeldingen og bør vurderes som alternativ/supplement.</li>
+    <li><strong>Vedtektene stiller et konkret tilleggskrav:</strong> regionale årsmøter skal kunne stemme «fysisk og/eller elektronisk i foreningens digitale løsning» (§6.4, vedtatt 2025). Elektronisk avstemning bør inn i kravlisten fra start.</li>
+  </ul>
+</section>
+
+<section id="dnd">
+  <h2>2. Dataforeningen i dag</h2>
+  <h3>Organisasjonen som skal støttes</h3>
+  <ul>
+    <li><strong>Medlemmer:</strong> nettsiden sier ~5 000 medlemmer fra 1 300+ virksomheter; andre kilder oppgir 7 500–8 500. Priser 2026: personlig 1 950 kr/år, pensjonist 950 kr, student gratis, første år gratis (kampanje). Arbeidsgiverbetalt medlemskap gir volumrabatter (5–25 %).</li>
+    <li><strong>Tre regioner</strong> (Sør-Øst, Midt-Nord, Vest) med regionstyrer på 4–10 personer og årsmøter innen mars. Landsstyret har 9–10 medlemmer, inkludert to representanter fra hvert regionstyre.</li>
+    <li><strong>38 faggrupper med egne sider</strong> (markedsføringen sier «60+ fagmiljøer»): 19 i Oslo/Sør-Øst, 12 i Trondheim/Midt-Nord, 5 i Bergen/Vest, pluss Oppdal Tech og nasjonale DAMA Norway. Hver faggruppe ledes av et <strong>fagstyre på 3–9 personer valgt av gruppens medlemmer</strong>; fagstyreledere møtes i faglederforum; nye grupper krever bare tre medlemmer (vedtekter §7).</li>
+    <li><strong>Konferansene eies av faggruppene</strong> — Make Data Smart, ARK, eHelsekonferansen, Yggdrasil, testkonferansene ODIN og Frøya, Betalingsformidling m.fl. Gruppeaktivitet og arrangementer henger altså tett sammen.</li>
+  </ul>
+  <h3>Dagens systemlandskap (observert utenfra)</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Funksjon</th><th>System</th><th>Merknad</th></tr></thead>
+    <tbody>
+      <tr><td>Nettsted</td><td><strong>Craft CMS</strong> på Servd-hosting</td><td>Byråbygget (Værsågod); altså <em>ikke</em> WordPress i dag</td></tr>
+      <tr><td>Medlemsregister og innmelding</td><td><strong>StyreWeb</strong> (Effektus AS)</td><td>Innmelding med Vipps-innlogging og kortbetaling; sannsynligvis det «nye medlemssystemet»</td></tr>
+      <tr><td>Medlemsflate</td><td><strong>Gnist</strong> (StyreWebs app) — trolig under utrulling</td><td>En indeksert, nå fjernet side på <code>dataforeningen.no/min-side</code> beskrev Gnist for DND-medlemmer (profil, faktura, medlemskort, arrangementer, fagarkiv)</td></tr>
+      <tr><td>Arrangementer</td><td><strong>Checkin.no</strong> (siden 2023)</td><td>All påmelding og billettsalg; kobling til medlemsregisteret (medlemspris-validering) er uavklart</td></tr>
+      <tr><td>Nyhetsbrev</td><td>Mailchimp</td><td>Felles nyhetsbrev + IT-kalender; ingen synlige per-gruppe-lister</td></tr>
+      <tr><td>Diverse</td><td>Meetup-gruppe, Microsoft Forms (CFP), Vimeo</td><td>Parallelle økosystemer som en portal bør forholde seg til</td></tr>
+    </tbody>
+  </table></div>
+  <div class="box">
+    <span class="boxtitle">Dagens gap — sett fra et medlem</span>
+    <p>Det finnes ingen «Min side» på dataforeningen.no, ingen måte å bli med i en faggruppe på nett (gruppesidene mangler innmeldingsknapp; nye grupper startes ved å e-poste redaksjonen), ingen interesseprofil, og medlemsfordeler distribueres manuelt per e-post. Alt oppdraget ditt beskriver — selvbetjent gruppemedlemskap, egne valg, interessebaserte forslag — mangler i dag og er samtidig lovet i foreningens egen kommunikasjon. Timingen for oppdraget er med andre ord god.</p>
+  </div>
+</section>
+
+<section id="krav">
+  <h2>3. Kravbildet for portalen</h2>
+  <p>Basert på oppdragsbeskrivelsen, vedtektene og organisasjonsstrukturen kan behovet formuleres som seks kjernekrav (brukt gjennomgående i vurderingene):</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>#</th><th>Krav</th><th>Innhold</th></tr></thead>
+    <tbody>
+      <tr><td>K1</td><td><strong>Gruppeoppdagelse</strong></td><td>Bla i og søke i faggrupper/nettverk på tvers av regioner; se beskrivelse, fagstyre og aktivitet</td></tr>
+      <tr><td>K2</td><td><strong>Selvbetjent inn-/utmelding</strong></td><td>Bli med i og forlate grupper selv; grupper kan være åpne, søknadsbaserte eller invitasjonsbaserte</td></tr>
+      <tr><td>K3</td><td><strong>Egen profil og valg</strong></td><td>Medlemmet administrerer kontaktinfo, samtykker, varslingspreferanser og sine medlemskap</td></tr>
+      <tr><td>K4</td><td><strong>Interessekartlegging → dynamiske forslag</strong></td><td>Medlemmet oppgir interesser og får forslag til grupper (og arrangementer) som matcher</td></tr>
+      <tr><td>K5</td><td><strong>Gruppelederadministrasjon</strong></td><td>Fagstyrene godkjenner medlemmer, når sine medlemmer med meldinger og publiserer oppdateringer — uten å gå via sekretariatet</td></tr>
+      <tr><td>K6</td><td><strong>Integrasjon</strong></td><td>Medlemsregisteret (StyreWeb) forblir master; innlogging for medlemmer uten M365-konto; sameksistens med M365, Checkin og nyhetsbrev</td></tr>
+    </tbody>
+  </table></div>
+  <p>I tillegg kommer et vedtektsfestet krav som bør planlegges inn selv om det ikke sto i oppdraget: <strong>elektronisk stemmegivning</strong> ved regionale årsmøter «i foreningens digitale løsning» (§6.4). En portal med verifisert medlemsidentitet er den naturlige plassen for dette.</p>
+</section>
+
+<section id="strategi">
+  <h2>4. Tre strategier — og valget mellom dem</h2>
+
+  <h3>Strategi A: Bruke StyreWeb/Gnist som den er</h3>
+  <p><span class="chip warn">Basislinje</span> Null byggekostnad, allerede delvis utrullet, håndterer faktura/Vipps/medlemskort, én databehandler. Men: generisk brukeropplevelse på StyreWeb-domene, bygget for kor og idrettslag snarere enn en profesjonsforening med 38+ faggrupper, og <strong>ingen spor av interessetagger eller gruppeforslag</strong>. Riktig som fundament (den kommer uansett), utilstrekkelig alene for K1, K4 og trolig K5.</p>
+
+  <h3>Strategi B: Tynn egenutviklet portal oppå medlemssystemets API</h3>
+  <p><span class="chip good">Anbefalt retning — betinget av API</span> StyreWeb forblir kilden til sannhet; portalen eier bare det StyreWeb mangler: gruppekatalog, interesseprofiler, forslagsmotor og merkevare-opplevelse på dataforeningen.no. Liten flate å bygge og vedlikeholde. <strong>Risikoen:</strong> StyreWeb har ingen offentlig API-dokumentasjon (bare spor av en API-innlogging), så omfang, vilkår og pris for en API-avtale må avklares med Effektus. Faller API-et bort, kan innmelding degradere pent til dyplenker inn i StyreWeb-skjemaer mens lesing skjer via eksport. Mønsteret er normalt i det norske markedet (Rubic har WordPress-SSO; HyperSys og Zubarus har dokumenterte API-er).</p>
+
+  <h3>Strategi C: Portalplattform (HumHub) med synkronisering mot registeret</h3>
+  <p><span class="chip good">Beste plattformvei</span> Raskeste vei til rike fellesskapsfunksjoner — grupperom, strømmer, kataloger, gruppelederroller — som er hyllevare i HumHub. Prisen er to systemer med hver sin kopi av medlemsdata: synkdrift, risiko for utdatert medlemsstatus mellom synkene, og en databehandler til i GDPR-regnskapet. «Bli med i gruppe» i portalen bør uansett skrives tilbake til registeret — som er akkurat den vanskelige delen fra strategi B.</p>
+
+  <div class="box">
+    <span class="boxtitle">Beslutningslogikk for dag 2 og utover</span>
+    <ol>
+      <li><strong>Hva er den annonserte selvbetjeningsportalen?</strong> Er det Gnist-utrullingen, eller et planlagt eget bygg? Svaret avgjør om oppgaven din er å <em>forme</em> det pågående prosjektet eller å foreslå tillegget.</li>
+      <li><strong>Har StyreWeb et brukbart API?</strong> Ja → strategi B (tynn portal, evt. med HumHub som ferdig ramme for grupperommene). Nei → strategi C med eksport-synk og dyplenker, eller press på leverandøren.</li>
+      <li><strong>Uansett utfall:</strong> interessekartlegging og forslagsmotor (K4) finnes ikke som hyllevare noe sted — planlegg en liten egenutviklet komponent (tag-overlapp-scoring; dager til to uker) og en onboarding der medlemmet velger interesser.</li>
+    </ol>
+  </div>
+
+  <div class="diagram" role="img" aria-label="Arkitekturskisse: medlemmer logger inn i portalen, som leser og skriver mot StyreWeb og henter innhold fra Microsoft 365">
+    <div class="row">
+      <div class="node"><strong>Medlemmer</strong><span>Entra External ID (gratis &lt; 50 000 MAU) og/eller Vipps Login</span></div>
+      <div class="node"><strong>Fagstyrer / regionstyrer</strong><span>Samme innlogging + lederroller i portalen</span></div>
+    </div>
+    <div class="link">↓ pålogging</div>
+    <div class="row">
+      <div class="node hero"><strong>Selvbetjeningsportal</strong><span>Gruppekatalog · inn/utmelding · interesseprofil · forslagsmotor · gruppelederpanel · (e-valg) — tynn portal eller HumHub, EU/EØS-hostet</span></div>
+    </div>
+    <div class="link">↕ API eller eksport-synk (medlemsstatus, gruppemedlemskap) · ↕ dyplenker/API mot Checkin (arrangementer)</div>
+    <div class="row">
+      <div class="node"><strong>StyreWeb</strong><span>Master for medlemskap, kontingent, betaling (Gnist som app-flate)</span></div>
+      <div class="node"><strong>Microsoft 365</strong><span>Dokumenter, kalendere, intern samhandling — hentes serverside via Graph ved behov</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="plattform">
+  <h2>5. Plattformvurderingen</h2>
+  <p>Fem tilnærminger ble vurdert mot kravene K1–K6. Oppsummert:</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Plattform</th><th>K1 oppdage</th><th>K2 inn/ut</th><th>K3 profil</th><th>K4 forslag</th><th>K5 lederadmin</th><th>K6 integrasjon</th><th>Norsk</th><th>Drift</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>HumHub</strong> <span class="chip good">Anbefalt</span></td>
+        <td>Ja (+ gratismoduler)</td><td>Native — tre innmeldingspolicyer per space</td><td>Native</td><td>Egen modul ~1–2 uker</td><td>Native — eier/admin/moderator per space med godkjenningskø</td><td>OIDC (manuell oppsett) + førsteparts REST-API for register-synk</td><td>I kjernen</td><td>Lav (PHP/MySQL)</td>
+      </tr>
+      <tr>
+        <td><strong>Open Social</strong> (Drupal)</td>
+        <td>Ja</td><td>Native — fem gruppetyper</td><td>Native, <strong>inkl. interesser</strong></td><td>Billigst å sette sammen (~2–5 dager Views + ~1 uke scoring)</td><td>Native</td><td>OIDC-modul (Drupal 11-støtte umoden) + JSON:API</td><td>Kjerne OK, distro har hull</td><td><strong>Høy</strong> (Drupal)</td>
+      </tr>
+      <tr>
+        <td><strong>WordPress + BuddyPress</strong></td>
+        <td>Ja</td><td>Native</td><td>xProfile-felter</td><td>Egen plugin ~1–2 uker</td><td>Native</td><td><strong>Best mot M365/External ID</strong> (WPO365 «Customers», CHF 309/år)</td><td><span class="chip warn">BuddyPress bare 76 % oversatt</span></td><td>Lav–middels</td>
+      </tr>
+      <tr>
+        <td><strong>Discourse</strong></td>
+        <td>Delvis (forum-idiom)</td><td>Native</td><td>Tynn</td><td>Ruby-plugin 2–4 uker</td><td>Native (gruppeeiere)</td><td>OIDC i kjernen, gruppesynk fra claims</td><td>I kjernen</td><td>Middels</td>
+      </tr>
+      <tr>
+        <td><strong>Skreddersydd tynn portal</strong></td>
+        <td colspan="3">Alt må bygges (MVP 6–12 utviklerike­uker)</td><td><strong>Dager</strong> — enklest her</td><td>Bygges</td><td>Perfekt (per konstruksjon)</td><td>Perfekt</td><td>Du eier alt, for alltid</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h3>Hvorfor HumHub vinner — og hva som mangler</h3>
+  <p>HumHub treffer fire av seks krav <em>native</em> og i akkurat den formen Dataforeningen trenger: spaces med åpen/søknad/invitasjon-innmelding er en én-til-én-modell av faggruppene, fagstyrene får per-space-administrasjon med godkjenningskøer og oppdateringsstrøm, og medlemmene styrer egen profil og varsler. REST-API-et (førsteparts gratismodul) dekker brukere, spaces og medlemskap — altså nøyaktig det en registersynk mot StyreWeb trenger. Norsk bokmål ligger i kjernen, stacken er billig PHP/MySQL med offisielt Docker-image, og tyske foreninger i samme størrelse har drevet HumHub i årevis.</p>
+  <p>Åpne øyne for hullene:</p>
+  <ul>
+    <li><strong>K4 finnes ikke på hylla:</strong> interesse→gruppe-forslag må bygges som en liten Yii2/PHP-modul (~1–2 uker: interessefelter × space-tagger, overlapp-scoring, dashbord-widget) pluss interessevelger i onboardingen. Dette er den ene uunngåelige egenutviklingen.</li>
+    <li><strong>Entra External ID-innlogging er manuell OIDC-konfigurasjon</strong> i en PHP-fil (en dag eller to med testing); ferdigpakket SAML ligger bak betalt Professional-utgave.</li>
+    <li><strong>REST-modulen er offisielt «beta»</strong> — lås versjoner og gjør synkjobben defensiv.</li>
+    <li><strong>Ingen ferdig Microsoft Graph-kobling</strong> — arrangement-/dokumentsameksistens med M365 er en liten egen synkjobb pluss lenker/innbygging via Custom Pages-modulen.</li>
+    <li><strong>AGPLv3:</strong> publiser egenutviklede moduler som åpen kildekode (uproblematisk — og god Dataforening-stil).</li>
+  </ul>
+  <p>Open Social er tettest på behovet konseptuelt (bygget for medlemsorganisasjoner, interesser på profilen ut av boksen) men krever Drupal-kompetanse i drift. Discourse er feil fasong (forum, ikke portal). Skreddersøm er riktig <em>hvis</em> StyreWeb-API-et er godt og noen forplikter seg til varig eierskap — og uansett er skreddersøm-mønsteret riktig for selve forslagsmotoren.</p>
+</section>
+
+<section id="veikart">
+  <h2>6. Anbefalt vei videre + dag 2-sjekkliste</h2>
+  <ol>
+    <li><strong>Avklar internt (dag 2):</strong> se sjekklisten under — særlig hva den annonserte portalen er, og StyreWeb-API-ets eksistens og vilkår.</li>
+    <li><strong>Skriv kravbildet (uke 1):</strong> K1–K6 pluss e-valg, forankret hos administrasjonen, et par fagstyrer og regionstyrene — fagstyrene er hovedbrukere av K5 og vet hvor skoen trykker.</li>
+    <li><strong>Pilot (uke 2–4):</strong> sett opp HumHub med 3–5 frivillige faggrupper som pilot-spaces, Entra External ID-innlogging, og manuell/CSV-synk fra StyreWeb i første omgang. Dette koster nesten ingenting og gir konkret grunnlag for å vurdere om HumHub-veien eller tynn-portal-veien skal skaleres.</li>
+    <li><strong>Bygg forslagsmotoren (parallelt):</strong> interessevelger + tag-overlapp-scoring som egen modul; start enkelt (grupper som deler tagger med interessene dine, sortert etter overlapp og regionnærhet).</li>
+    <li><strong>Beslutt skalering:</strong> med API-svar fra Effektus og pilot-erfaring på bordet velges strategi B eller C for full utrulling — inkludert tilbakeskriving av gruppemedlemskap til registeret og eventuelt e-valgmodul til årsmøtene i mars.</li>
+  </ol>
+
+  <div class="box">
+    <span class="boxtitle">Dag 2-sjekkliste — spørsmål til sekretariatet og Effektus/StyreWeb</span>
+    <ol>
+      <li>Hva er den annonserte «selvbetjeningsportalen» konkret — Gnist-utrulling eller eget bygg? Hvem eier prosjektet internt?</li>
+      <li>Finnes StyreWeb-API-et for kunder? Omfang (lese medlemmer? skrive gruppemedlemskap? webhooks?), autentisering, begrensninger og pris for API-avtale.</li>
+      <li>Hvordan er faggruppene og regionene modellert i StyreWeb i dag — organisasjonsledd, grupper eller aktiviteter? Kan ett medlem ha mange gruppemedlemskap med selvbetjent inn/ut?</li>
+      <li>Kan StyreWeb/Gnist føderere innlogging (OIDC/SAML)? Er Vipps Login tilgjengelig utover innmeldingen? Hvis ikke: hvor god er e-post/mobil-kvaliteten i registeret for kobling mot en ekstern innloggingsløsning?</li>
+      <li>Eksport: formater og frekvens for bulk-uttrekk (fallback for synk), og databehandlervilkår for en portal som leser medlemsdata.</li>
+      <li>Er Checkin koblet til medlemsregisteret (medlemspris-validering, deltakelse tilbake til registeret) — eller helt parallell?</li>
+      <li>Hvilket system var det <em>forrige</em> medlemssystemet, og overlevde historiske deltakelses-/interessedata migreringen? (Mat for forslagsmotoren.)</li>
+      <li>Hvilke grupper lever på Meetup, og skal portalen erstatte eller peke til dem? Og: finnes det per-gruppe-e-postlister i dag utenom Mailchimp?</li>
+    </ol>
+  </div>
+</section>
+
+<section id="identitet">
+  <h2>7. Bakgrunn: innlogging og M365-integrasjon</h2>
+  <p>Kjernefakta fra v1-researchen som fortsatt styrer arkitekturen:</p>
+  <ul>
+    <li><strong>Medlemmer uten konto i M365-tenanten kan ikke bruke vanlig Entra ID-SSO.</strong> Løsningen er <a href="https://learn.microsoft.com/en-us/entra/external-id/external-identities-pricing" rel="noopener">Entra External ID</a> (gratis under 50 000 aktive brukere/mnd, egen katalog adskilt fra tenanten) eller B2B-gjestekontoer (gir ekte SharePoint-tilgang, men tung administrasjon) eller lokale kontoer. For ansatte/tillitsvalgte i tenanten er SSO gratis på alle Entra-nivåer.</li>
+    <li><strong>M365-innhold bør hentes serverside via Graph API</strong>, ikke bygges inn i iframes: SharePoint-sider blokkerer iframe helt, dokumentinnbygging krever pålogget tenant-bruker, og anonym innbygging finnes ikke (unntak: Microsoft Forms og publiserte personlige kalendere). SharePoint Pages-API-et (Graph v1.0) kan speile nyheter inn i portalen; gratis webhooks og delta-spørringer holder innholdet oppdatert. Merk: gruppekalendere krever delegert tjenestekonto (app-tillatelser støttes ikke), og Power Automate sitt HTTP-steg krever Premium-lisens — bruk Graph-webhooks i stedet.</li>
+    <li><strong>Nonprofit-lisensene endret seg i 2025:</strong> gratis Business Premium er avviklet; dagens tilbud er inntil 300 gratis Business Basic-lisenser + 75 % rabatter, og Azure-tilskuddet på $2 000/år består (dekker hostingen, men må fornyes årlig). Microsofts EU Data Boundary (fullført feb. 2025) og EU/EØS-hosting av portalen (Hetzner/UpCloud/Terrahost fra ~€4–9/mnd, eller Azure Norway East) gjør GDPR-bildet ryddig; databehandleravtale trengs uansett.</li>
+  </ul>
+</section>
+
+<section id="cms">
+  <h2>8. Bakgrunn: CMS-researchen fra v1</h2>
+  <p>Runde én vurderte elleve open source-CMS for et publiserings-intranett. Kortversjonen, fortsatt gyldig hvis det også skal bygges intranett-/publiseringsflater:</p>
+  <ul>
+    <li><span class="chip good">Best for publisering</span> <strong>WordPress + WPO365</strong>: gratis Entra-SSO med «intranettmodus», ferdig SharePoint-innbygging, blokkbasert sidebygging, ~100 % bokmål, lavest vedlikehold. (Merk: dataforeningen.no kjører i dag Craft CMS — et WordPress-intranett ville være et tilleggssystem, ikke en erstatning.)</li>
+    <li><strong>Umbraco 17 LTS</strong> som .NET-alternativ (MIT, utmerket blokkredigering, gratis Entra-SSO-pakke; admin bare ~42 % på bokmål).</li>
+    <li><span class="chip bad">Eliminert</span> Directus (ikke lenger open source — proprietær MSCL-lisens fra v12), Strapi (admin-SSO ~$195/mnd), Payload (permanent utvikleravhengighet; Figma-eid), Drupal (Entra-SSO umoden på v11), Joomla (stiftelsens økonomi kollapset), Ghost (ingen SSO, feil kategori), Grav (økosystem i overgang). Headless + Next.js frarådes generelt for frivillighetsdrift — Microsoft Graph Toolkit pensjoneres 28. august 2026, så alle M365-widgets må håndbygges.</li>
+    <li><strong>Kostnadsbildet:</strong> alle open source-alternativene koster ~6–43 €/mnd i kontanter; vedlikeholdstimene dominerer totalkostnaden. Estimert byggeinnsats: WordPress-intranett 40–80 t, HumHub-portal 20–60 t (+ forslagsmodul), headless 150–400 t.</li>
+  </ul>
+</section>
+
+<section id="kilder" class="sources">
+  <h2>9. Sentrale kilder</h2>
+  <h3>Dataforeningen</h3>
+  <ul>
+    <li><a href="https://dataforeningen.no/aktuelt/vaaren-er-i-gang-og-det-spirer-og-gror-i-dataforeningen" rel="noopener">DND: «Våren er i gang…» — nytt medlemssystem og kommende selvbetjeningsportal (mars 2026)</a></li>
+    <li><a href="https://df-website.files.svdcdn.com/production/images/Hovedvedtekter-for-Dataforeningen-2025-med-appendix-2604-2025-kopi.pdf" rel="noopener">Hovedvedtekter 2025 (PDF)</a> — §6.4 elektronisk stemmegivning, §7 faggrupper</li>
+    <li><a href="https://dataforeningen.no/medlemsskap" rel="noopener">Medlemskap og priser</a> · <a href="https://dataforeningen.no/faggrupper/" rel="noopener">Faggruppeoversikt</a> · <a href="https://dataforeningen.no/om-oss" rel="noopener">Om oss / organisering</a></li>
+    <li><a href="https://dennorskedataforening.portal.styreweb.com/arrangement/ArrangementSession?ID=Innmelding" rel="noopener">DNDs innmeldingsportal på StyreWeb</a> · <a href="https://www.checkinevent.com/referanser/dnd" rel="noopener">Checkins DND-referanse</a></li>
+  </ul>
+  <h3>Medlemssystemer</h3>
+  <ul>
+    <li><a href="https://www.styreweb.com/funksjoner/" rel="noopener">StyreWeb funksjoner</a> · <a href="https://www.styreweb.com/gnist/" rel="noopener">Gnist medlemsapp</a> · <a href="https://www.styreweb.com/sentralorganisasjon/" rel="noopener">StyreWeb for sentralorganisasjoner</a></li>
+    <li>API-dokumenterte norske alternativer: <a href="https://hjelpe.hypersys.no/knowledge-base/api/" rel="noopener">HyperSys API</a> · <a href="https://home.zubarus.com/" rel="noopener">Zubarus</a> · <a href="https://regweb.no/" rel="noopener">RegWeb</a>; øvrige: <a href="https://rubic.no/" rel="noopener">Rubic</a> (Rubic ID med WordPress-SSO), <a href="https://www.winorg.no/" rel="noopener">Winorg</a>, <a href="https://www.cornerstone.no/" rel="noopener">Cornerstone</a> (BankID)</li>
+    <li>Internasjonale: <a href="https://www.wildapricot.com/pricing" rel="noopener">Wild Apricot</a> · <a href="https://hivebrite.io/" rel="noopener">Hivebrite</a> (AI-anbefalinger, enterprise-pris) · <a href="https://learn.microsoft.com/en-us/industry/nonprofit/fundraising-engagement-get-started-overview" rel="noopener">Microsofts nonprofit-CRM pensjoneres des. 2026</a></li>
+  </ul>
+  <h3>Plattformer</h3>
+  <ul>
+    <li><a href="https://docs.humhub.org/docs/user/spaces/" rel="noopener">HumHub Spaces (innmeldingspolicyer, roller)</a> · <a href="https://marketplace.humhub.com/module/rest/description" rel="noopener">HumHub REST-modul</a> · <a href="https://docs.humhub.org/docs/admin/oauth" rel="noopener">HumHub OIDC</a> · <a href="https://marketplace.humhub.com/module/custom_pages/description" rel="noopener">Custom Pages</a></li>
+    <li><a href="https://www.drupal.org/project/social" rel="noopener">Open Social</a> · <a href="https://buddypress.org/about/" rel="noopener">BuddyPress</a> · <a href="https://translate.wordpress.org/locale/nb/default/wp-plugins/buddypress/" rel="noopener">BuddyPress nb-status (76 %)</a> · <a href="https://github.com/discourse/discourse-openid-connect" rel="noopener">Discourse OIDC</a></li>
+    <li><a href="https://www.wpo365.com/pricing/" rel="noopener">WPO365 (inkl. External ID-støtte)</a></li>
+  </ul>
+  <h3>Identitet og M365</h3>
+  <ul>
+    <li><a href="https://learn.microsoft.com/en-us/entra/external-id/external-identities-pricing" rel="noopener">Entra External ID-prising (50 000 gratis MAU)</a> · <a href="https://www.microsoft.com/en-us/security/business/microsoft-entra-pricing" rel="noopener">Entra-prising (SSO gratis)</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/graph/api/resources/sitepage?view=graph-rest-1.0" rel="noopener">SharePoint Pages-API</a> · <a href="https://learn.microsoft.com/en-us/graph/change-notifications-overview" rel="noopener">Graph-webhooks</a> · <a href="https://devblogs.microsoft.com/microsoft365dev/microsoft-graph-toolkit-retirement/" rel="noopener">Graph Toolkit pensjoneres aug. 2026</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/industry/nonprofit/microsoft-for-nonprofits/updates" rel="noopener">Microsoft for Nonprofits: lisensendringer 2025</a> · <a href="https://blogs.microsoft.com/on-the-issues/2025/02/26/microsoft-completes-landmark-eu-data-boundary-offering-enhanced-data-residency-and-transparency/" rel="noopener">EU Data Boundary</a></li>
+  </ul>
+</section>
+
+<footer>
+  Researchrapport v2 utarbeidet med Claude Code · v1 (11. aug. 2026) dekket CMS/intranett-sporet; v2 (samme dag) er omskrevet rundt medlemmenes selvadministrasjon etter avklart oppdrag. Estimerte timetall er skjønn; alle priser, lisensvilkår og observasjoner om dataforeningen.no er verifisert mot kildene per 11. august 2026. Interne forhold (StyreWeb-API, prosjektstatus for annonsert portal) er merket som antakelser og må avklares på dag 2.
+</footer>
+
+</div>
+
+</html>
