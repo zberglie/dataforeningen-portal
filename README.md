@@ -1,7 +1,10 @@
-# Dataforeningen: Selvbetjeningsportal for den frivillige delen
+# Dataforeningen: Ressursportal (tidl. selvbetjeningsportal)
 
-**Status: Utredningsfase fullført — klar for beslutningsfase.**
-Sist oppdatert: 11. august 2026.
+**Status: Byggefasen startet 26.08 — se [dnd-ressursportal](https://github.com/zberglie/dnd-ressursportal)
+(lokalt: `/home/ubuntu/prosjekter/dnd-ressursportal`). Plattformvalget er tatt: WordPress
+(B11); drift på OVH VPS (B12). Dette repoet er heretter utredningsarkiv; nye beslutninger
+føres i bygge-repoets beslutningslogg (B11→). StyreWeb-avklaringen er fortsatt kritisk sti.**
+Sist oppdatert: 26. august 2026.
 
 ## Hva dette er
 
@@ -24,11 +27,17 @@ igjen.
 | `docs/02-presentasjon.html` | Executive-presentasjon, 12 lysbilder, distribuerbar |
 | `docs/03-dag2-sjekkliste.md` | Spørsmålene som må avklares internt og med StyreWeb/Effektus |
 | `docs/04-beslutningslogg.md` | Beslutninger tatt, anbefalinger gitt, og hva som står åpent |
-| `humhub-poc/` | Kjørende proof of concept (Docker) — se `humhub-poc/DEMO.md` for demoløype og innlogginger |
+| `docs/05-gapanalyse-ressursportal.md` | Gap-analyse (12.08) av kravspecen fra Hege (ressursportal, Team Experis Bergen) mot utredningen — se `/home/ubuntu/delt/DND portal/Kravspek.eml` |
+| `docs/06-craft-arkitektur.md` | Arkitekturnotat (12.08): slik bygges portalen på Craft CMS «riktig første gang» — kontrakter rundt identitet/medlemsstatus/dokumenter, egen instans vs. hovedsiden, innholdsmodell, byggerekkefølge |
+| `humhub-poc/` | Kjørende proof of concept (Docker) — se `humhub-poc/DEMO.md` for demoløype og innlogginger. Etter kravspecen: fase 2-demo |
+| `prototype/index.html` | Klikkbar prototype av ressursportalen (12.08): forside etter Heges skisse, 11 ressursområder, søk, dokumentvisning, innloggingsflyt. Åpnes rett i nettleser |
+| `wordpress-pilot/` | **Kjørende pilotmiljø** (Docker, port 8082): WordPress med eget tema (prototypens design), innholdsmodell som plugin, dokumentproxy-mock og kravspecens innholdsstruktur seedet. Se `wordpress-pilot/PILOT.md` |
 
 Publiserte versjoner (private claude.ai-artifacts, deles fra sidens delemeny):
 - Rapport: https://claude.ai/code/artifact/b4c40c35-5db4-44c1-bb77-0bc24d37642d
 - Presentasjon: https://claude.ai/code/artifact/e694dc79-7c21-488e-92e6-7a339d9989bf
+- Gap-analyse kravspec (12.08): https://claude.ai/code/artifact/82032cb1-d7b8-4ca7-b8e8-9a31469f77f2
+- Klikkbar prototype (12.08): https://claude.ai/code/artifact/b8b1a82b-83eb-4c1a-9d8b-1da57fd1d257 (kopi i `/home/ubuntu/delt/DND portal/ressursportal-prototype.html`)
 
 Distribusjonskopier ligger også i `/home/ubuntu/delt/` (presentasjon + demoguide).
 
@@ -78,18 +87,15 @@ docker compose ps         # status
 
 ## Slik gjenopptas prosjektet
 
-1. Les `docs/04-beslutningslogg.md` (hva som er anbefalt og hva som står åpent),
-   deretter `docs/03-dag2-sjekkliste.md` (hva som må avklares først).
-2. Gjennomfør avklaringene med sekretariatet og Effektus/StyreWeb.
-3. Med svarene på plass: velg vei B eller C (kriterier i beslutningsloggen) og
-   utvid PoC-en til pilot med 3–5 ekte faggrupper, ekte innlogging
-   (Entra External ID via OIDC) og enkel synk fra registeret.
-4. Rapport og presentasjon oppdateres enklest ved å be Claude Code oppdatere
+1. Les `docs/05-gapanalyse-ressursportal.md` (gjeldende kravbilde + plan), deretter
+   `docs/04-beslutningslogg.md` (B09/B10 er de styrende beslutningene per 12.08).
+2. **StyreWeb/Effektus-møte** med agendaen i gap-analysen kap. 6 (SSO-føderering?
+   status-API? dyplenker? GDPR?). Beslutningstreet der dekker alle fire utfall.
+3. **Pilotoppsett på valgt plattform** (arbeidshypotese: WordPress + egen
+   Graph-dokumentproxy) med prototypen (`prototype/index.html`) som UX-referanse:
+   innholdsmodell, innlogging etter StyreWeb-utfallet, dokumentvisning mot et
+   test-SharePoint, søk.
+4. Innhold (Hege) og Figma (Yvonne) løper parallelt; HumHub-PoC-en beholdes urørt
+   som fase 2-demo.
+5. Rapport/analyse/prototype oppdateres ved å be Claude Code oppdatere
    artifact-URL-ene over (fungerer også fra en ny økt når URL-en oppgis).
-
-## Naturlige neste byggekloss i PoC-en (uavhengig av avklaringene)
-
-- OIDC-innlogging mot en Entra External ID-testtenant (erstatter lokale passord)
-- Mock av StyreWeb-synk mot HumHubs REST-API (demonstrerer K6)
-- Interessevelger i onboarding (i dag: fritekstfelt på profilen)
-- TLS + e-post hvis demoen skal vises utenfor serveren

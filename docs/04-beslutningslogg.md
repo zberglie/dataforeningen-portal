@@ -3,6 +3,10 @@
 Formatet er lett ADR-inspirert: hva, status, begrunnelse, konsekvens.
 Statuser: **Anbefalt** (utredningens råd, ikke vedtatt), **Vedtatt**, **Åpen**.
 
+> **26.08.2026: Loggen er avsluttet her.** Byggefasen startet; B11 og videre føres i
+> [dnd-ressursportal/docs/04-beslutningslogg.md](https://github.com/zberglie/dnd-ressursportal/blob/main/docs/04-beslutningslogg.md).
+> B10-hypotesen (WordPress) er vedtatt som B11 der.
+
 ---
 
 ## B01 · Målgruppe: medlemmene, ikke primært ansatte
@@ -58,6 +62,27 @@ plassering. Åpent: egen modul vs. tredjepartsløsning; kravspesifikasjon ikke p
 V1-utredningen (WordPress + WPO365 m.m.) gjelder et eventuelt publiserings-intranett.
 dataforeningen.no kjører Craft CMS; portalbehovet er ikke et CMS-behov. Tas kun opp
 igjen hvis publiseringsflater etterspørres.
+
+## B09 · Ressursportal-kravspecen (v1.2) er gjeldende scope
+**Status: Vedtatt (kravspec mottatt fra Hege Svendsen 12.08.2026)**
+Kravspecen definerer produktet som en **ressursportal** (dokumenter/maler/veiledninger bak
+medlemsinnlogging, StyreWeb-SSO + API-verifisering, SharePoint-visning, søk, admin-CMS).
+Faggruppe-inn/utmelding delegeres til StyreWeb (KR-08). Full gap-analyse: `05-gapanalyse-ressursportal.md`.
+Konsekvens: B03 delvis avgjort (tynn innholdsportal, kun lese-API-behov), B04 omposisjonert
+(HumHub = fase 2-kandidat; PoC-en beholdes som fase 2-demo), B05 blir fallback (kravspecen
+ønsker StyreWeb-SSO), B08 delvis reversert (CMS-researchen fra v1 er relevant igjen).
+
+## B10 · Portalen bygges internt — ikke av Team Experis Bergen
+**Status: Vedtatt (oppdragsgivers beslutning, 12.08.2026)**
+Vi tar hele ansvaret selv: teknologivalg, utvikling, drift og forvaltning. Kravspecens
+ansvarsdeling (kap. 3, «Team Bergen skal levere») blir vår backlog; «åpne spørsmål til
+utviklingsteamet» (kap. 22) besvares av oss (utkast i gap-analysen kap. 5).
+Konsekvenser: (1) Hege må avklare med Bergen-teamet at de ikke engasjeres — utenfor vår
+kontroll, flagges til henne; (2) StyreWeb-avklaringen er fortsatt kritisk sti og første steg;
+(3) teknologivalget tas av oss — arbeidshypotese: **WordPress + egen Graph-dokumentproxy**
+(beste admin-flate for NFR-05, ferdig SSO-økosystem, lavest forvaltningsrisiko iht.
+v1-researchen), valideres i pilotoppsett før forpliktelse; (4) klikkbar prototype
+(`prototype/index.html`, 12.08) er UX-referansen for bygget.
 
 ---
 
