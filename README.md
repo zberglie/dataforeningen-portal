@@ -76,7 +76,7 @@ docker compose down       # stopp
 docker compose ps         # status
 ```
 
-- URL: http://172.30.112.84:8080 (endre baseUrl ved behov — kommando i `humhub-poc/DEMO.md`)
+- URL: http://minibedrift.mshome.net:8080 (endre baseUrl ved behov — kommando i `humhub-poc/DEMO.md`)
 - Innlogginger, demoløype og teknisk beskrivelse: `humhub-poc/DEMO.md`
 - Demodata reetableres/utvides med `seed.php` (idempotent):
   `docker compose cp seed.php humhub:/seed.php && docker compose exec humhub su www-data -s /bin/bash -c 'php /seed.php'`

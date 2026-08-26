@@ -1,7 +1,7 @@
 # Demo: Selvbetjeningsportal for Dataforeningen (PoC)
 
-**URL:** http://172.30.112.84:8080
-(Fungerer fra nettverket serveren står i. Bytt adresse ved behov — se «Drift» nederst.)
+**URL:** http://minibedrift.mshome.net:8080
+(mshome-navnet overlever VM-omstart; bytt baseUrl ved behov — se «Drift» nederst.)
 
 HumHub 1.18.4 (open source, AGPL) satt opp som proof of concept for medlemmenes
 selvadministrasjon av faggrupper, jf. researchrapporten v2.
