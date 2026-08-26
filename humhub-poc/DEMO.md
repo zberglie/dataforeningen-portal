@@ -73,3 +73,37 @@ docker compose exec humhub su www-data -s /bin/bash -c \
 
 PoC-forbehold: kjører på HTTP uten TLS, e-postutsending er ikke konfigurert, og
 passordene over er demopassord. Ikke eksponer mot internett i denne tilstanden.
+
+## Integrasjons-PoC med ressursportalen (26.08.2026)
+
+Demonstrerer «én side, to motorer» + dokumentdeling i gruppene:
+
+1. **Felles drakt:** eget barnetema `DND` (`dnd-tema/DND/scss/variables.scss`) med
+   portalens merkevaretokens (lime #E5FF54, ink #1F1F1F, blå #3E7FFF, flater, radius,
+   fontstack). Arver alt fra kjernetemaet — kun variabler, ingen maloverstyringer
+   (bevisst: oppgraderingstrygt). Aktivt via `php yii theme/switch DND`.
+2. **Dokumentdeling per gruppe:** filmodulen `cfiles` (offisiell, gratis) installert og
+   aktivert i alle 9 spaces (`aktiver-filmodul.php`, idempotent). Gruppemedlemmer får
+   fanen **Filer** i spacet: mapper, opplasting, nedlasting — tilgang følger
+   space-medlemskap automatisk.
+3. **Kryssnavigasjon:** portalens Faggrupper-side lenker hit (lagt inn i dev-basen,
+   ikke i seed — PoC-markert).
+
+**Demoløype fildeling:** logg inn som `kari` → space «BI & Analytics» → fanen «Filer»
+→ last opp et dokument → logg inn som `ingrid` (ikke medlem) → hun ser ikke filen.
+Medlemskap = tilgang, uten ekstra administrasjon.
+
+**Reetablering** (etter `docker compose down -v`):
+```bash
+docker compose cp dnd-tema/DND humhub:/data/themes/DND
+docker compose exec humhub sh -c 'chown -R www-data:www-data /data/themes/DND'
+docker compose exec humhub su www-data -s /bin/sh -c 'php /opt/humhub/protected/yii theme/switch DND'
+docker compose exec humhub su www-data -s /bin/sh -c 'php /opt/humhub/protected/yii module/install cfiles && php /opt/humhub/protected/yii module/enable cfiles'
+docker compose cp aktiver-filmodul.php humhub:/aktiver-filmodul.php
+docker compose exec humhub su www-data -s /bin/sh -c 'php /aktiver-filmodul.php'
+```
+Tilbake til standardtema: `php yii theme/switch HumHub`.
+
+**Det PoC-en bevisst ikke viser** (venter på StyreWeb-avklaringen): felles
+OIDC-innlogging (én pålogging på tvers) og medlemskapssynk StyreWeb → spaces.
+Arkitekturen for begge er beskrevet i samtaleloggen/fase 2-underlaget.

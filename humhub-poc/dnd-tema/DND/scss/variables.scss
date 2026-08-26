@@ -1,0 +1,24 @@
+// DND-tema (integrasjons-PoC 26.08.2026): Dataforeningens merkevare oppå HumHub.
+// Samme tokens som ressursportalens tema (dnd-ressursportal :root) — verifisert
+// mot dataforeningen.no. Arver alt fra kjernetemaet ($baseTheme); kun variabler
+// overstyres, ingen maloverstyringer — bevisst, for oppgraderingstrygghet.
+$baseTheme: HumHub;
+
+// Merkevare
+$accent: #E5FF54;      // lime — Dataforeningens signaturfarge
+$primary: #1F1F1F;     // ink — handlingsfarge, som portalens mørke knapper
+$info: #3E7FFF;
+$danger: #E62E19;
+$link-color: #1F1F1F;
+
+// Flater (portalens --section/--paper)
+$body-bg: #F4F4F1;
+$background-color-page: #F4F4F1;
+$background-color-main: #FFFFFF;
+$background-color-secondary: #F4F4F1;
+
+// Typografi og form (portalens --font-sans, --radius, --radius-s)
+$font-family-base: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+$border-radius: 10px;
+$border-radius-sm: 5px;
+$border-radius-lg: 10px;

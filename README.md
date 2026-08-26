@@ -95,7 +95,7 @@ docker compose ps         # status
    Graph-dokumentproxy) med prototypen (`prototype/index.html`) som UX-referanse:
    innholdsmodell, innlogging etter StyreWeb-utfallet, dokumentvisning mot et
    test-SharePoint, søk.
-4. Innhold (Hege) og Figma (Yvonne) løper parallelt; HumHub-PoC-en beholdes urørt
+4. Innhold (Hege) og Figma (Yvonne) løper parallelt; HumHub-PoC-en er utvidet 26.08 med integrasjons-PoC (DND-tema + fildeling, se humhub-poc/DEMO.md) og beholdes
    som fase 2-demo.
 5. Rapport/analyse/prototype oppdateres ved å be Claude Code oppdatere
    artifact-URL-ene over (fungerer også fra en ny økt når URL-en oppgis).

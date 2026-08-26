@@ -1,0 +1,50 @@
+name: dnd-portal-pilot
+
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: DndPilotDb2026
+      MYSQL_ROOT_PASSWORD: DndPilotRoot2026
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  wordpress:
+    image: wordpress:6.8-php8.3-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8082:80"
+    environment: &wpenv
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: DndPilotDb2026
+    volumes: &wpvols
+      - wordpress:/var/www/html
+      - ./wp-content/themes/dnd-ressursportal:/var/www/html/wp-content/themes/dnd-ressursportal:ro
+      - ./wp-content/plugins/dnd-portal:/var/www/html/wp-content/plugins/dnd-portal:ro
+      - ./wp-content/plugins/dnd-dokumentproxy:/var/www/html/wp-content/plugins/dnd-dokumentproxy:ro
+      - ./seed.php:/seed.php:ro
+
+  cli:
+    image: wordpress:cli-php8.3
+    profiles: ["cli"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment: *wpenv
+    volumes: *wpvols
+    user: "33:33"
+
+volumes:
+  db:
+  wordpress:

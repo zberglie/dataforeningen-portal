@@ -1,0 +1,1149 @@
+<title>Ressursportal-prototypen</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --lime: #E4FB4A;
+    --ink: #131313;
+    --muted: #5D5F58;
+    --paper: #FFFFFF;
+    --section: #F6F6F2;
+    --border: #E4E5DC;
+    --chip-bg: #E7F2FB;
+    --chip-ink: #2A6FA8;
+    --bad-ink: #A03D31;
+    --bad-soft: #F6E3DF;
+    --good-ink: #256B43;
+    --good-soft: #DFF0E5;
+    --warn-ink: #8A5E14;
+    --warn-soft: #F5EBD6;
+    --word-ink: #275D8B;
+    --word-soft: #E3EDF4;
+    --forms-ink: #5E3AA0;
+    --forms-soft: #ECE5F7;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, .serif {
+    font-family: Charter, "Bitstream Charter", Georgia, "Times New Roman", serif;
+    font-weight: 500;
+    line-height: 1.15;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .shell { max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }
+  .narrow { max-width: 46rem; }
+
+  /* ---------- demo ribbon ---------- */
+  .ribbon {
+    background: var(--ink); color: #fff;
+    font-size: 0.78rem; text-align: center; padding: 0.35rem 1rem;
+  }
+  .ribbon a { color: var(--lime); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+  /* ---------- header ---------- */
+  header.top {
+    background: var(--paper);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 40;
+  }
+  .topbar {
+    display: flex; align-items: center; gap: 1.25rem;
+    padding: 0.85rem 1.25rem; max-width: 1220px; margin: 0 auto;
+  }
+  .brand { text-decoration: none; display: flex; align-items: baseline; gap: 0.5rem; white-space: nowrap; }
+  .brand .name { font-family: Charter, Georgia, serif; font-weight: 700; font-size: 1.15rem; }
+  .brand .tag {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 0.05rem 0.55rem;
+  }
+  nav.mainnav { display: flex; gap: 1.4rem; margin: 0 auto; }
+  nav.mainnav a {
+    text-decoration: none; font-size: 0.95rem; color: var(--ink); padding: 0.2rem 0;
+    border-bottom: 2px solid transparent;
+  }
+  nav.mainnav a:hover { border-bottom-color: var(--ink); }
+  nav.mainnav a[aria-current="page"] { border-bottom-color: var(--ink); font-weight: 600; }
+
+  .headsearch { position: relative; }
+  .headsearch input {
+    border: 1px solid var(--border); border-radius: 10px; padding: 0.42rem 0.7rem 0.42rem 2rem;
+    font: inherit; font-size: 0.88rem; width: 13rem; background: var(--section); color: var(--ink);
+  }
+  .headsearch svg { position: absolute; left: 0.55rem; top: 50%; translate: 0 -50%; width: 1rem; height: 1rem; color: var(--muted); }
+
+  .btn {
+    display: inline-block; border: none; cursor: pointer; text-decoration: none; text-align: center;
+    font: inherit; font-size: 0.95rem; font-weight: 600;
+    padding: 0.55rem 1.2rem; border-radius: 10px;
+  }
+  .btn-dark { background: var(--ink); color: #fff; }
+  .btn-dark:hover { background: #2c2c2c; }
+  .btn-line { background: var(--paper); color: var(--ink); border: 1.5px solid var(--ink); }
+  .btn-line:hover { background: var(--section); }
+  .btn-lime { background: var(--lime); color: var(--ink); }
+
+  .userchip {
+    display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--muted); white-space: nowrap;
+  }
+  .userchip button {
+    background: none; border: none; cursor: pointer; font: inherit; font-size: 0.8rem;
+    color: var(--muted); text-decoration: underline; text-underline-offset: 2px; padding: 0;
+  }
+
+  .menubtn { display: none; background: none; border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 0.7rem; font: inherit; cursor: pointer; }
+
+  @media (max-width: 900px) {
+    .menubtn { display: block; margin-left: auto; }
+    nav.mainnav {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--paper); border-bottom: 1px solid var(--border);
+      flex-direction: column; gap: 0; padding: 0.5rem 1.25rem 1rem;
+    }
+    nav.mainnav.open { display: flex; }
+    nav.mainnav a { padding: 0.5rem 0; border-bottom: none; }
+    .headsearch input { width: 9rem; }
+    .topbar > .btn-dark { display: none; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero { background: var(--lime); text-align: center; padding: 4.5rem 1.25rem 5rem; }
+  .hero h1 { font-size: clamp(2.4rem, 6.5vw, 4.3rem); max-width: 22ch; margin: 0 auto; }
+  .hero p { margin: 1.25rem auto 0; max-width: 34rem; font-size: 1.12rem; color: #3a3d30; }
+
+  .photostrip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; padding: 1rem 1.25rem; max-width: 1220px; margin: 0 auto; }
+  .photostrip div { aspect-ratio: 4 / 5; border-radius: 10px; }
+  .ph1 { background: linear-gradient(155deg, #F6D7EA 20%, #EDB9D8 75%); }
+  .ph2 { background: linear-gradient(155deg, #B9BdB3 0%, #7c8078 80%); }
+  .ph3 { background: linear-gradient(155deg, #E4FB4A 15%, #C9E22F 85%); }
+  .ph4 { background: linear-gradient(155deg, #3D5BD9 10%, #27379B 90%); }
+  @media (max-width: 700px) { .photostrip { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ---------- search ---------- */
+  .bigsearch { position: relative; max-width: 46rem; margin: 2.5rem auto 0; }
+  .bigsearch input {
+    width: 100%; font: inherit; font-size: 1.05rem; color: var(--ink);
+    padding: 0.95rem 1.1rem 0.95rem 3rem;
+    border: 1.5px solid var(--border); border-radius: 12px; background: var(--paper);
+  }
+  .bigsearch > svg { position: absolute; left: 1rem; top: 1.15rem; width: 1.3rem; height: 1.3rem; color: var(--muted); }
+
+  .results {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 50;
+    background: var(--paper); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(19,19,19,0.12);
+    text-align: left; overflow: hidden; max-height: 24rem; overflow-y: auto;
+  }
+  .results .grouplabel {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+    padding: 0.6rem 1rem 0.2rem;
+  }
+  .results a {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.45rem 1rem; text-decoration: none; font-size: 0.95rem;
+  }
+  .results a:hover, .results a.active { background: var(--section); }
+  .results .crumb { color: var(--muted); font-size: 0.78rem; margin-left: auto; white-space: nowrap; }
+  .results .empty { padding: 0.9rem 1rem; color: var(--muted); font-size: 0.9rem; }
+
+  .typebadge {
+    font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.1em 0.55em; border-radius: 999px; white-space: nowrap;
+  }
+  .t-pdf   { background: var(--bad-soft);   color: var(--bad-ink); }
+  .t-word  { background: var(--word-soft);  color: var(--word-ink); }
+  .t-excel { background: var(--good-soft);  color: var(--good-ink); }
+  .t-ppt   { background: var(--warn-soft);  color: var(--warn-ink); }
+  .t-forms { background: var(--forms-soft); color: var(--forms-ink); }
+  .t-lenke { background: var(--section);    color: var(--muted); }
+  .t-side  { background: var(--chip-bg);    color: var(--chip-ink); }
+
+  /* ---------- sections ---------- */
+  main { display: block; }
+  .section { padding: 3.5rem 0 4rem; }
+  .section.alt { background: var(--section); }
+  .section h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
+  .section .sub { color: var(--muted); margin-top: 0.5rem; max-width: 44rem; }
+
+  .cardgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.1rem; margin-top: 2rem; }
+  .card {
+    background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1.35rem 1.4rem 1.5rem; box-shadow: 0 2px 10px rgba(19,19,19,0.04);
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  .cardhead { display: flex; align-items: center; gap: 0.8rem; }
+  .chip {
+    flex: none; width: 42px; height: 42px; border-radius: 11px;
+    background: var(--chip-bg); color: var(--chip-ink);
+    display: grid; place-items: center;
+  }
+  .chip svg { width: 24px; height: 24px; }
+  .card h3 { font-size: 1.08rem; font-weight: 700; font-family: inherit; letter-spacing: 0; }
+  .card h3 a { text-decoration: none; }
+  .card h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .linklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+  .linklist a {
+    text-decoration: none; font-size: 0.93rem; display: flex; gap: 0.5rem; align-items: baseline;
+  }
+  .linklist a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .linklist .arrow { color: var(--chip-ink); font-weight: 700; }
+  .card .more { margin-top: auto; font-size: 0.85rem; color: var(--muted); }
+  .card .more a { color: var(--ink); }
+
+  .statement { text-align: center; padding: 4.5rem 1.25rem; }
+  .statement h2 { font-size: clamp(1.9rem, 4.5vw, 3rem); }
+  .statement p { color: var(--muted); margin-top: 0.6rem; font-size: 1.05rem; }
+
+  .ctagrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; margin-top: 0.5rem; }
+  @media (max-width: 700px) { .ctagrid { grid-template-columns: 1fr; } }
+  .cta { display: flex; gap: 0.9rem; align-items: flex-start; background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem 1.3rem; }
+  .cta p { font-size: 0.92rem; color: var(--muted); margin-top: 0.15rem; }
+  .cta strong { font-size: 0.98rem; }
+  .cta a { color: var(--ink); }
+
+  /* ---------- subpages ---------- */
+  .pagehead { padding: 2.25rem 0 0.5rem; }
+  .crumbs { font-size: 0.85rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+  .crumbs a { color: var(--muted); text-underline-offset: 2px; }
+  .crumbs .sep { color: var(--border); }
+  .crumbs .here { color: var(--ink); font-weight: 600; }
+  .pagehead h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-top: 0.9rem; }
+  .pagehead .intro { color: var(--muted); max-width: 44rem; margin-top: 0.6rem; font-size: 1.05rem; }
+
+  .metaline { font-size: 0.82rem; color: var(--muted); margin-top: 0.9rem; }
+  .metaline .dot { margin: 0 0.4rem; color: var(--border); }
+
+  .doclist { list-style: none; margin: 1.25rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.55rem; max-width: 46rem; }
+  .doclist li { }
+  .docrow {
+    display: flex; align-items: center; gap: 0.8rem; text-decoration: none;
+    background: var(--paper); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.7rem 1rem;
+  }
+  .docrow:hover { border-color: var(--ink); }
+  .docrow .title { font-size: 0.97rem; }
+  .docrow .open { margin-left: auto; font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+
+  .temagrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.75rem; }
+
+  .backlink { display: inline-block; margin-top: 1.5rem; font-size: 0.92rem; text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 1px; }
+
+  .feedback {
+    margin-top: 2.5rem; background: var(--section); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.1rem 1.3rem; max-width: 46rem;
+    display: flex; gap: 0.9rem; align-items: flex-start;
+  }
+  .feedback p { font-size: 0.9rem; color: var(--muted); margin-top: 0.1rem; }
+  .feedback a { color: var(--ink); }
+
+  /* ---------- doc viewer ---------- */
+  .viewerbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem; margin-top: 1.4rem; }
+  .viewerbar .note { font-size: 0.8rem; color: var(--muted); }
+  .stage {
+    margin-top: 1.1rem; background: #EDEEE6; border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 2rem 1rem 2.5rem; display: grid; place-items: center;
+  }
+  .fakepage {
+    background: #fff; width: min(640px, 100%); min-height: 560px; border-radius: 4px;
+    box-shadow: 0 8px 30px rgba(19,19,19,0.14); padding: 3rem 3rem 2.5rem;
+  }
+  .fakepage h2 { font-size: 1.4rem; margin-bottom: 1.6rem; }
+  .line { height: 10px; border-radius: 5px; background: #E7E7DE; margin: 0.65rem 0; }
+  .w95 { width: 95%; } .w88 { width: 88%; } .w75 { width: 75%; } .w60 { width: 60%; } .w40 { width: 40%; }
+  .fakeform label { display: block; font-size: 0.85rem; font-weight: 600; margin: 1.1rem 0 0.3rem; }
+  .fakeform .field { border: 1px solid var(--border); border-radius: 8px; height: 2.4rem; background: #FAFAF6; }
+  .fakeform .field.tall { height: 5.5rem; }
+
+  /* ---------- tables (om-siden) ---------- */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--paper); margin-top: 1.5rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  th { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); background: var(--section); }
+  td code, .kr {
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.8rem;
+    background: var(--section); padding: 0.08em 0.4em; border-radius: 5px; white-space: nowrap;
+  }
+
+  .infobox {
+    background: var(--chip-bg); border-left: 3px solid var(--chip-ink); border-radius: 0 10px 10px 0;
+    padding: 0.9rem 1.2rem; margin: 1.4rem 0; max-width: 46rem; font-size: 0.95rem;
+  }
+
+  /* ---------- footer ---------- */
+  footer.site { border-top: 1px solid var(--border); margin-top: 4rem; padding: 3rem 0 2.5rem; background: var(--paper); }
+  .footgrid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem; }
+  @media (max-width: 800px) { .footgrid { grid-template-columns: 1fr 1fr; } }
+  footer.site .fname { font-family: Charter, Georgia, serif; font-weight: 700; font-size: 1.3rem; }
+  footer.site p { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; max-width: 22rem; }
+  footer.site h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.6rem; }
+  footer.site ul { list-style: none; margin: 0; padding: 0; }
+  footer.site li { margin: 0.3rem 0; }
+  footer.site li a { text-decoration: none; font-size: 0.92rem; }
+  footer.site li a:hover { text-decoration: underline; }
+  .footnote { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); }
+
+  /* ---------- overlays ---------- */
+  .overlay {
+    position: fixed; inset: 0; z-index: 100; background: rgba(19,19,19,0.55);
+    display: grid; place-items: center; padding: 1.25rem;
+  }
+  .overlay[hidden] { display: none; }
+  .panel {
+    background: var(--paper); border-radius: 16px; padding: 2.25rem 2.25rem 2rem;
+    width: min(30rem, 100%); box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  }
+  .panel h2 { font-size: 1.5rem; }
+  .panel .lede { color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem; }
+  .panel .actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.5rem; }
+  .panel ul { margin: 0.75rem 0 0 1.2rem; font-size: 0.92rem; }
+  .panel li { margin: 0.25rem 0; }
+  .skiplink { display: inline-block; margin-top: 1.1rem; font-size: 0.8rem; color: var(--muted); background: none; border: none; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; padding: 0; }
+
+  .ssosteps { list-style: none; margin: 1.4rem 0 0; padding: 0; }
+  .ssosteps li {
+    display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0;
+    font-size: 0.92rem; color: var(--muted); transition: color 0.2s;
+  }
+  .ssosteps li .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border); flex: none; }
+  .ssosteps li.done { color: var(--ink); }
+  .ssosteps li.done .dot { background: var(--good-ink); }
+  .ssosteps li.fail { color: var(--bad-ink); }
+  .ssosteps li.fail .dot { background: var(--bad-ink); }
+
+  .errcard {
+    margin-top: 1.25rem; background: var(--bad-soft); color: var(--bad-ink);
+    border-radius: 10px; padding: 0.9rem 1.1rem; font-size: 0.92rem;
+  }
+
+  .toast {
+    position: fixed; bottom: 1.5rem; left: 50%; translate: -50% 0; z-index: 120;
+    background: var(--ink); color: #fff; font-size: 0.88rem;
+    padding: 0.6rem 1.2rem; border-radius: 999px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .toast[hidden] { display: none; }
+</style>
+
+<div class="ribbon">Klikkbar prototype · alt innhold er plassholder · <a href="#/om">Om prototypen og kravsporing</a></div>
+
+<header class="top">
+  <div class="topbar">
+    <a class="brand" href="#/"><span class="name">Dataforeningen</span><span class="tag">Ressursportal</span></a>
+    <button class="menubtn" id="menubtn" aria-expanded="false" aria-controls="mainnav">Meny</button>
+    <nav class="mainnav" id="mainnav" aria-label="Hovedmeny">
+      <a href="#/" data-nav="hjem">Hjem</a>
+      <a href="#/" data-nav="portal">Ressursportal</a>
+      <a href="#/arrangementer" data-nav="arrangementer">Arrangementer</a>
+      <a href="#/faggrupper" data-nav="faggrupper">Faggrupper</a>
+    </nav>
+    <div class="headsearch" id="headsearch">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="search" id="headsearch-input" placeholder="Søk" aria-label="Søk i ressursportalen">
+      <div class="results" id="headsearch-results" hidden></div>
+    </div>
+    <div class="userchip" id="userchip" hidden><span id="username"></span><button id="logoutbtn" type="button">Logg ut</button></div>
+    <button class="btn btn-dark" id="medlemskapbtn" type="button">Mitt medlemskap</button>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer class="site">
+  <div class="shell footgrid">
+    <div>
+      <div class="fname">Dataforeningen</div>
+      <p>Sammen utvikler vi den digitale fremtiden. Den norske dataforening er Norges største nettverk for IT- og digitaliseringsprofesjonelle. Siden 1953.</p>
+    </div>
+    <div>
+      <h4>Ressursportalen</h4>
+      <ul>
+        <li><a href="#/">Verktøykassen</a></li>
+        <li><a href="#/omrade/bidra">Bidra tilbake</a></li>
+        <li><a href="#/om">Om prototypen</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Snarveier</h4>
+      <ul>
+        <li><a href="#" data-action="medlemskap">Mitt medlemskap</a></li>
+        <li><a href="#/arrangementer">Arrangementer</a></li>
+        <li><a href="#/faggrupper">Faggrupper</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Kontakt</h4>
+      <ul>
+        <li><a href="#/tema/bidra/foresla">Har du tips til innhold?</a></li>
+        <li><a href="#/tema/bidra/frivillig">Bli frivillig</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="shell footnote">
+    Prototype til internt arbeid i Dataforeningen (kravspec ressursportal v1.2). Ikke et offisielt nettsted —
+    design avgjøres i Figma, innhold er plassholdere, og SSO/API/SharePoint er simulert.
+  </div>
+</footer>
+
+<!-- Innloggingsoverlegg -->
+<div class="overlay" id="login" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="login-title">
+    <h2 id="login-title" class="serif">Ressursportalen er for medlemmer</h2>
+    <p class="lede">Innloggingen starter på Dataforeningen.no. Du sendes videre til StyreWeb (SSO), og portalen
+    verifiserer aktivt medlemskap via StyreWeb-API-et før du slipper inn.</p>
+    <div id="login-choices">
+      <div class="actions">
+        <button class="btn btn-dark" type="button" data-login="aktiv">Logg inn som Kari (aktivt medlem)</button>
+        <button class="btn btn-line" type="button" data-login="inaktiv">Logg inn som Ola (utmeldt)</button>
+      </div>
+      <button class="skiplink" type="button" id="skiplogin">Hopp over innloggingen (demo)</button>
+    </div>
+    <ol class="ssosteps" id="ssosteps" hidden>
+      <li data-step="1"><span class="dot"></span>Sender deg fra Dataforeningen.no …</li>
+      <li data-step="2"><span class="dot"></span>Autentiserer via StyreWeb (SSO) …</li>
+      <li data-step="3"><span class="dot"></span>Verifiserer aktivt medlemskap (StyreWeb-API) …</li>
+    </ol>
+    <div class="errcard" id="loginerror" hidden>
+      <strong>Du har ikke tilgang til ressursportalen.</strong><br>
+      Medlemskapet ditt er ikke aktivt. Forny medlemskapet i StyreWeb, eller kontakt administrasjonen
+      hvis du mener dette er feil.
+      <div class="actions"><button class="btn btn-line" type="button" id="retrylogin">Prøv igjen</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Mitt medlemskap-modal -->
+<div class="overlay" id="medlemskap" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="medlemskap-title">
+    <h2 id="medlemskap-title" class="serif">Mitt medlemskap</h2>
+    <p class="lede">Denne knappen tar deg til medlemskortet ditt i StyreWeb. Der kan du:</p>
+    <ul>
+      <li>oppdatere kontaktinformasjon og samtykker</li>
+      <li>se medlemsstatus og medlemskategori</li>
+      <li>melde deg inn i og ut av faggrupper</li>
+      <li>administrere medlemskapet ditt</li>
+    </ul>
+    <div class="actions">
+      <button class="btn btn-dark" type="button" id="tilstyreweb">Fortsett til StyreWeb →</button>
+      <button class="btn btn-line" type="button" data-close="medlemskap">Lukk</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+"use strict";
+
+/* ---------------- data: kravspec kap. 10 + Heges skisse ---------------- */
+
+const AREAS = [
+  {
+    id: "lokallag", title: "Administrasjon av lokallag og faggrupper",
+    blurb: "Protokoller, styrearbeid, vedtekter, nominasjon, møtereferat, medlemspleie og verving.",
+    temaer: [
+      { id: "protokoller", title: "Protokoller og møtereferat",
+        intro: "Maler og eksempler for protokoller og referater fra styremøter og årsmøter.",
+        owner: "Administrasjonen", updated: "juni 2026",
+        docs: [
+          { id: "mal-protokoll", title: "Mal for protokoll", type: "Word", kw: ["protokoll", "referat", "mal"] },
+          { id: "mal-referat", title: "Mal for møtereferat", type: "Word", kw: ["referat", "møte"] },
+          { id: "eksempel-protokoll", title: "Eksempel: årsmøteprotokoll", type: "PDF", kw: ["årsmøte", "protokoll"] }
+        ],
+        related: ["drive-faggruppe/kom-i-gang", "arsmoter/gjennomfore"] },
+      { id: "styrearbeid", title: "Styrearbeid",
+        intro: "Styrehjul, rollebeskrivelser og oversikt over hva administrasjonen hjelper til med.",
+        owner: "Administrasjonen", updated: "mai 2026",
+        docs: [
+          { id: "styrehjul", title: "Styrehjulet", type: "PDF", kw: ["styrehjul", "årshjul"] },
+          { id: "roller", title: "Rollene i et styre", type: "PDF", kw: ["roller", "leder", "styremedlem"] },
+          { id: "hva-gjor-admin", title: "Hva gjør administrasjonen?", type: "PDF", kw: ["administrasjonen", "støtte"] }
+        ],
+        related: ["landsstyret/styrearbeid-ls"] },
+      { id: "vedtekter", title: "Vedtekter og nominasjon",
+        intro: "Gjeldende vedtekter, nominasjonsprosess og valginstruks.",
+        owner: "Administrasjonen", updated: "april 2026",
+        docs: [
+          { id: "hovedvedtekter", title: "Hovedvedtekter", type: "PDF", kw: ["vedtekter", "regler"] },
+          { id: "nominasjon", title: "Mal for nominasjonskomiteen", type: "Word", kw: ["nominasjon", "valg"] },
+          { id: "valginstruks", title: "Valginstruks", type: "PDF", kw: ["valg", "instruks"] }
+        ],
+        related: ["arsmoter/valg"] },
+      { id: "verving", title: "Medlemspleie og verving",
+        intro: "Slik tar dere godt imot nye medlemmer — og får flere av dem.",
+        owner: "Administrasjonen", updated: "juni 2026",
+        docs: [
+          { id: "vervetips", title: "Tips til verving", type: "PDF", kw: ["verving", "rekruttering", "medlemmer"] },
+          { id: "velkomstmail", title: "Velkomst-e-post til nye medlemmer", type: "Word", kw: ["velkommen", "e-post", "mal"] }
+        ],
+        related: ["faggrupper-ressurs/rekruttere"] }
+    ]
+  },
+  {
+    id: "drive-faggruppe", title: "Slik driver du en faggruppe eller et styre",
+    blurb: "Styretips, møterom, inkludering, møtemaler og protokoller.",
+    temaer: [
+      { id: "kom-i-gang", title: "Kom i gang som fagstyre",
+        intro: "Det viktigste for deg som er ny i et fagstyre — fra første møte til årshjul.",
+        owner: "Faglederforum", updated: "juni 2026",
+        docs: [
+          { id: "styretips", title: "Styretips", type: "PDF", kw: ["styre", "tips"] },
+          { id: "styrehjul-fg", title: "Styrehjul for faggrupper", type: "PDF", kw: ["styrehjul", "årshjul"] },
+          { id: "motemal", title: "Møtemal", type: "Word", kw: ["møte", "agenda", "mal"] }
+        ],
+        related: ["lokallag/protokoller", "faggrupper-ressurs/starte"] },
+      { id: "moterom", title: "Møter og møterom",
+        intro: "Booking av møterom løses som veiledning i MVP — her er fremgangsmåten.",
+        owner: "Administrasjonen", updated: "mai 2026",
+        docs: [
+          { id: "booke-moterom", title: "Booke møterom — veiledning", type: "PDF", kw: ["booke", "booking", "møterom", "rom"] },
+          { id: "gode-moter", title: "Sjekkliste for gode møter", type: "PDF", kw: ["sjekkliste", "møte"] }
+        ],
+        related: ["nettverksmoter/praktisk"] },
+      { id: "inkludering", title: "Inkludering og engasjement",
+        intro: "Slik senker dere terskelen for at flere deltar og bidrar.",
+        owner: "Faglederforum", updated: "mars 2026",
+        docs: [
+          { id: "inkluderingstips", title: "Gode tips til inkludering", type: "PDF", kw: ["inkludering", "mangfold"] }
+        ],
+        related: ["ildsjel/nettverk"] }
+    ]
+  },
+  {
+    id: "arsmoter", title: "Årsmøter og landsmøter",
+    blurb: "Innkalling, sakslister, årshjul, valg, delegater, vedtekter og praktisk informasjon.",
+    temaer: [
+      { id: "gjennomfore", title: "Gjennomføre årsmøte",
+        intro: "Alt du trenger for å kalle inn til og gjennomføre et ryddig årsmøte.",
+        owner: "Administrasjonen", updated: "januar 2026",
+        docs: [
+          { id: "mal-innkalling", title: "Mal for innkalling", type: "Word", kw: ["innkalling", "årsmøte"] },
+          { id: "mal-saksliste", title: "Mal for saksliste", type: "Word", kw: ["saksliste", "agenda"] },
+          { id: "sjekkliste-arsmote", title: "Sjekkliste for årsmøtet", type: "PDF", kw: ["sjekkliste", "årsmøte"] },
+          { id: "arshjul-arsmote", title: "Årshjul", type: "PDF", kw: ["årshjul", "frister"] }
+        ],
+        related: ["lokallag/protokoller"] },
+      { id: "valg", title: "Valg og delegater",
+        intro: "Valg av delegater og praktisk informasjon rundt regionale årsmøter.",
+        owner: "Administrasjonen", updated: "februar 2026",
+        docs: [
+          { id: "valg-delegater", title: "Valg av delegater — slik gjør du det", type: "PDF", kw: ["delegater", "valg"] },
+          { id: "praktisk-info", title: "Praktisk informasjon", type: "PDF", kw: ["praktisk"] }
+        ],
+        related: ["lokallag/vedtekter"] },
+      { id: "landsmote", title: "Landsmøtet",
+        intro: "Frister, innkalling og styringsdokumenter for landsmøtet.",
+        owner: "Administrasjonen", updated: "april 2026",
+        docs: [
+          { id: "landsmote-innkalling", title: "Innkalling og frister", type: "PDF", kw: ["landsmøte", "innkalling"] },
+          { id: "landsmote-vedtekter", title: "Vedtekter", type: "PDF", kw: ["vedtekter"] }
+        ],
+        related: ["landsstyret/saker"] }
+    ]
+  },
+  {
+    id: "nettverksmoter", title: "Nettverksmøter",
+    blurb: "Arrangørtips, SoMe-tips, deltakerrekruttering og møteromsveiledning.",
+    temaer: [
+      { id: "planlegge", title: "Planlegge nettverksmøte",
+        intro: "Fra idé til gjennomført fagmøte — arrangørtipsene som gjør det enkelt.",
+        owner: "Administrasjonen", updated: "juni 2026",
+        docs: [
+          { id: "arrangortips", title: "Arrangørtips", type: "PDF", kw: ["arrangere", "fagmøte", "tips"] },
+          { id: "sjekkliste-nettverk", title: "Sjekkliste for nettverksmøter", type: "PDF", kw: ["sjekkliste"] }
+        ],
+        related: ["foredrag/lage"] },
+      { id: "deltakere", title: "Markedsføring og deltakere",
+        intro: "Slik får du folk til å komme — og til å komme tilbake.",
+        owner: "Markedsansvarlig", updated: "mai 2026",
+        docs: [
+          { id: "fa-deltakere", title: "Slik får du deltakere", type: "PDF", kw: ["deltakere", "rekruttering", "påmelding"] },
+          { id: "some-tips", title: "Tips til SoMe", type: "PDF", kw: ["some", "sosiale medier", "linkedin"] }
+        ],
+        related: ["marked/profil"] },
+      { id: "praktisk", title: "Rom og praktisk",
+        intro: "Veiledning for å booke rom til eventet.",
+        owner: "Administrasjonen", updated: "mai 2026",
+        docs: [
+          { id: "booke-rom-event", title: "Booke rom til eventet — veiledning", type: "PDF", kw: ["booke", "rom", "lokale"] }
+        ],
+        related: ["drive-faggruppe/moterom"] }
+    ]
+  },
+  {
+    id: "konferanser", title: "Slik arrangerer vi konferanser",
+    blurb: "Budsjettmal, call for papers, lokasjon, foredragsholdere, årshjul og budsjettprosess.",
+    temaer: [
+      { id: "okonomi", title: "Økonomi og budsjett",
+        intro: "Budsjettmalen og prosessen for å spille inn til budsjettet.",
+        owner: "Administrasjonen", updated: "juni 2026",
+        docs: [
+          { id: "budsjettmal", title: "Budsjettmal for konferanser", type: "Excel", kw: ["budsjett", "budsjettmal", "økonomi", "regneark"] },
+          { id: "budsjettprosess", title: "Budsjettprosessen", type: "PDF", kw: ["budsjett", "prosess", "frister"] }
+        ],
+        related: ["konferanser/ny-konferanse"] },
+      { id: "program", title: "Program og foredragsholdere",
+        intro: "Call for papers, valg av foredragsholdere og lokasjon.",
+        owner: "Faglederforum", updated: "april 2026",
+        docs: [
+          { id: "cfp-mal", title: "Mal for call for papers", type: "Word", kw: ["call for papers", "cfp", "foredrag"] },
+          { id: "valg-foredragsholder", title: "Valg av foredragsholdere", type: "PDF", kw: ["foredragsholder"] },
+          { id: "valg-lokasjon", title: "Valg av lokasjon", type: "PDF", kw: ["lokasjon", "sted", "venue"] }
+        ],
+        related: ["foredrag/lage"] },
+      { id: "ny-konferanse", title: "Spille inn ny konferanse",
+        intro: "Har fagstyret en konferanseidé? Slik spiller dere den inn.",
+        owner: "Administrasjonen", updated: "mars 2026",
+        docs: [
+          { id: "arshjul-dnd", title: "Årshjul for Dataforeningen", type: "PDF", kw: ["årshjul"] },
+          { id: "form-ny-konferanse", title: "Spill inn ny konferanseidé", type: "Forms", kw: ["konferanse", "idé", "forslag"] }
+        ],
+        related: ["konferanser/okonomi"] }
+    ]
+  },
+  {
+    id: "landsstyret", title: "Saker til landsstyret",
+    blurb: "Saksmal, nye ideer, årshjul, vedtekter og informasjon om styrearbeid.",
+    temaer: [
+      { id: "saker", title: "Melde saker til landsstyret",
+        intro: "Saksmalen og hvordan du følger opp saker etter behandling.",
+        owner: "Landsstyret", updated: "mai 2026",
+        docs: [
+          { id: "saksmal", title: "Saksmal", type: "Word", kw: ["sak", "saksmal", "landsstyret"] },
+          { id: "folge-opp", title: "Hvordan følge opp saker", type: "PDF", kw: ["oppfølging"] }
+        ],
+        related: ["arsmoter/landsmote"] },
+      { id: "styrearbeid-ls", title: "Styrearbeid i landsstyret",
+        intro: "Årshjul, forventninger og hva som skal til for å lykkes.",
+        owner: "Landsstyret", updated: "april 2026",
+        docs: [
+          { id: "arshjul-ls", title: "Årshjul for landsstyret", type: "PDF", kw: ["årshjul"] },
+          { id: "lykkes", title: "Hva skal til for å lykkes?", type: "PDF", kw: ["styrearbeid"] },
+          { id: "vedtekter-ls", title: "Vedtekter", type: "PDF", kw: ["vedtekter"] }
+        ],
+        related: ["lokallag/styrearbeid"] }
+    ]
+  },
+  {
+    id: "marked", title: "Marked og kommunikasjon",
+    blurb: "Fagblogg, pressemeldinger, markedsplan, LinkedIn, brandmanual, PPT-mal og brevmal.",
+    temaer: [
+      { id: "profil", title: "Profil og maler",
+        intro: "Brandmanualen og malene som holder Dataforeningen visuelt samlet.",
+        owner: "Markedsansvarlig", updated: "juni 2026",
+        docs: [
+          { id: "brandmanual", title: "Brandmanual", type: "PDF", kw: ["brand", "profil", "logo", "farger"] },
+          { id: "ppt-mal", title: "Presentasjonsmal", type: "PowerPoint", kw: ["ppt", "presentasjon", "mal"] },
+          { id: "brevmal", title: "Brevmal", type: "Word", kw: ["brev", "mal"] },
+          { id: "some-maler", title: "Maler for poster til SoMe", type: "Lenke", kw: ["some", "poster", "canva"] }
+        ],
+        related: ["nettverksmoter/deltakere"] },
+      { id: "skrive", title: "Skrive og publisere",
+        intro: "Fagblogg, pressetips og retningslinjer for å skrive på vegne av foreningen.",
+        owner: "Markedsansvarlig", updated: "mai 2026",
+        docs: [
+          { id: "fagblogg", title: "Fagblogg — slik skriver du blogg", type: "PDF", kw: ["blogg", "skrive"] },
+          { id: "retningslinjer-skrive", title: "Retningslinjer for å skrive på vegne av Dataforeningen", type: "PDF", kw: ["retningslinjer"] },
+          { id: "pressetips", title: "Pressetips", type: "PDF", kw: ["presse", "media"] }
+        ],
+        related: ["marked/profil"] },
+      { id: "markedsplan", title: "Markedsplan",
+        intro: "Malen for markedsplan og tips til LinkedIn.",
+        owner: "Markedsansvarlig", updated: "mars 2026",
+        docs: [
+          { id: "markedsplan-mal", title: "Mal for markedsplan", type: "Word", kw: ["markedsplan"] },
+          { id: "linkedin-tips", title: "Tips til LinkedIn", type: "PDF", kw: ["linkedin", "some"] }
+        ],
+        related: [] }
+    ]
+  },
+  {
+    id: "faggrupper-ressurs", title: "Faggrupper",
+    blurb: "Starte faggruppe, rekruttere, fagstyrets rolle og partnerpitch.",
+    temaer: [
+      { id: "starte", title: "Starte en faggruppe",
+        intro: "Fra idé til etablert faggruppe — slik går dere frem.",
+        owner: "Administrasjonen", updated: "juni 2026",
+        docs: [
+          { id: "starte-faggruppe", title: "Slik starter du en faggruppe", type: "PDF", kw: ["starte", "ny gruppe", "etablere"] },
+          { id: "fagstyrets-rolle", title: "Fagstyrets rolle", type: "PDF", kw: ["fagstyre", "rolle"] }
+        ],
+        related: ["drive-faggruppe/kom-i-gang"] },
+      { id: "rekruttere", title: "Rekruttere medlemmer",
+        intro: "Rekrutteringstips og pitch for partnere.",
+        owner: "Faglederforum", updated: "april 2026",
+        docs: [
+          { id: "rekruttere-slik", title: "Slik rekrutterer du", type: "PDF", kw: ["rekruttere", "verving"] },
+          { id: "partnerpitch", title: "Partnerpitch", type: "PowerPoint", kw: ["partner", "pitch", "sponsor"] }
+        ],
+        related: ["lokallag/verving"] }
+    ]
+  },
+  {
+    id: "foredrag", title: "Tips til foredrag",
+    blurb: "Gode foredrag, innholdsstruktur, verktøy og publikumsengasjement.",
+    temaer: [
+      { id: "lage", title: "Lage et godt foredrag",
+        intro: "Struktur, innhold og forberedelser som løfter foredraget.",
+        owner: "Faglederforum", updated: "mai 2026",
+        docs: [
+          { id: "gode-foredrag", title: "Hvordan lage gode foredrag", type: "PDF", kw: ["foredrag", "presentasjon"] },
+          { id: "innhold-struktur", title: "Tips til innhold og struktur", type: "PDF", kw: ["struktur", "innhold"] }
+        ],
+        related: ["konferanser/program"] },
+      { id: "verktoy", title: "Verktøy og publikum",
+        intro: "Hjelpemidler og teknikker for å engasjere publikum.",
+        owner: "Faglederforum", updated: "mars 2026",
+        docs: [
+          { id: "verktoy-hjelpemidler", title: "Verktøy og hjelpemidler", type: "PDF", kw: ["verktøy"] },
+          { id: "engasjere-publikum", title: "Hvordan engasjere publikum", type: "PDF", kw: ["publikum", "engasjement"] }
+        ],
+        related: [] }
+    ]
+  },
+  {
+    id: "ildsjel", title: "Ildsjelmanual",
+    blurb: "Hva en ildsjel er, engasjement, nettverk og gjennomføring.",
+    temaer: [
+      { id: "manual", title: "Ildsjelmanualen",
+        intro: "Manualen for deg som vil drive aktiviteter fremover i Dataforeningen.",
+        owner: "Administrasjonen", updated: "juni 2026",
+        docs: [
+          { id: "ildsjelmanualen", title: "Ildsjelmanualen", type: "PDF", kw: ["ildsjel", "manual", "frivillig"] },
+          { id: "hva-er-ildsjel", title: "Hva er en ildsjel i Dataforeningen?", type: "PDF", kw: ["ildsjel"] }
+        ],
+        related: ["bidra/frivillig"] },
+      { id: "nettverk", title: "Engasjement og nettverk",
+        intro: "Slik skaper du engasjement og bygger nettverk rundt aktivitetene dine.",
+        owner: "Faglederforum", updated: "april 2026",
+        docs: [
+          { id: "skape-engasjement", title: "Hvordan skape engasjement", type: "PDF", kw: ["engasjement"] },
+          { id: "bygge-nettverk", title: "Bygge nettverk", type: "PDF", kw: ["nettverk"] }
+        ],
+        related: ["drive-faggruppe/inkludering"] }
+    ]
+  },
+  {
+    id: "bidra", title: "Bidra tilbake",
+    blurb: "Forslag til forbedringer, nye ressurser, foredrag og frivillig arbeid — via skjema.",
+    temaer: [
+      { id: "frivillig", title: "Meld deg som frivillig",
+        intro: "Vil du bidra i en faggruppe, på et arrangement eller i regionen? Meld interesse her.",
+        owner: "Administrasjonen", updated: "juni 2026",
+        docs: [
+          { id: "form-frivillig", title: "Frivilligregistrering", type: "Forms", kw: ["frivillig", "bidra", "melde interesse"] }
+        ],
+        related: ["ildsjel/manual"] },
+      { id: "foresla", title: "Foreslå forbedringer og nye ressurser",
+        intro: "Har du tips til innhold eller savner noe? Sammen gjør vi ressursportalen enda bedre.",
+        owner: "Administrasjonen", updated: "juni 2026",
+        docs: [
+          { id: "form-tips", title: "Har du tips til innhold eller savner noe?", type: "Forms", kw: ["tips", "forslag", "forbedring", "tilbakemelding"] }
+        ],
+        related: [] },
+      { id: "foredragsholder", title: "Bli foredragsholder",
+        intro: "Meld interesse for å holde foredrag i en faggruppe eller på en konferanse.",
+        owner: "Faglederforum", updated: "mai 2026",
+        docs: [
+          { id: "form-foredragsholder", title: "Meld interesse som foredragsholder", type: "Forms", kw: ["foredrag", "foredragsholder"] }
+        ],
+        related: ["foredrag/lage"] }
+    ]
+  }
+];
+
+/* ---------------- helpers ---------------- */
+
+const $ = (sel, el) => (el || document).querySelector(sel);
+const $$ = (sel, el) => Array.from((el || document).querySelectorAll(sel));
+
+const TYPECLASS = { PDF: "t-pdf", Word: "t-word", Excel: "t-excel", PowerPoint: "t-ppt", Forms: "t-forms", Lenke: "t-lenke" };
+const badge = t => '<span class="typebadge ' + (TYPECLASS[t] || "t-lenke") + '">' + t + "</span>";
+
+const smiley = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="9" cy="10" r="1.2" fill="currentColor"/><circle cx="15" cy="10" r="1.2" fill="currentColor"/><path d="M8.5 14c1 1.3 2.2 2 3.5 2s2.5-.7 3.5-2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const searchsvg = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+function getArea(id) { return AREAS.find(a => a.id === id); }
+function getTema(areaId, temaId) { const a = getArea(areaId); return a && a.temaer.find(t => t.id === temaId); }
+
+function crumbs(items) {
+  return '<nav class="crumbs" aria-label="Brødsmulesti">' + items.map((it, i) => {
+    const last = i === items.length - 1;
+    return (i ? '<span class="sep">/</span>' : "") +
+      (last ? '<span class="here">' + it.label + "</span>"
+            : '<a href="' + it.href + '">' + it.label + "</a>");
+  }).join("") + "</nav>";
+}
+
+/* ---------------- search index ---------------- */
+
+const INDEX = [];
+AREAS.forEach(a => {
+  INDEX.push({ kind: "Ressursområder", label: a.title, sub: "", href: "#/omrade/" + a.id, hay: (a.title + " " + a.blurb).toLowerCase(), tag: '<span class="typebadge t-side">Område</span>' });
+  a.temaer.forEach(t => {
+    INDEX.push({ kind: "Temasider", label: t.title, sub: a.title, href: "#/tema/" + a.id + "/" + t.id, hay: (t.title + " " + t.intro).toLowerCase(), tag: '<span class="typebadge t-side">Temaside</span>' });
+    t.docs.forEach(d => {
+      INDEX.push({ kind: "Dokumenter og skjemaer", label: d.title, sub: t.title, href: "#/dok/" + a.id + "/" + t.id + "/" + d.id, hay: (d.title + " " + (d.kw || []).join(" ")).toLowerCase(), tag: badge(d.type) });
+    });
+  });
+});
+
+function doSearch(q) {
+  q = q.trim().toLowerCase();
+  if (q.length < 2) return null;
+  const hits = INDEX.filter(e => e.hay.includes(q));
+  hits.sort((a, b) => a.hay.indexOf(q) - b.hay.indexOf(q));
+  return hits.slice(0, 9);
+}
+
+function renderResults(hits, box) {
+  if (!hits) { box.hidden = true; box.innerHTML = ""; return; }
+  if (!hits.length) {
+    box.innerHTML = '<div class="empty">Ingen treff. Søket dekker ressursområder, temasider og dokumenttitler med søkeord.</div>';
+    box.hidden = false; return;
+  }
+  let html = "", lastKind = "";
+  hits.forEach(h => {
+    if (h.kind !== lastKind) { html += '<div class="grouplabel">' + h.kind + "</div>"; lastKind = h.kind; }
+    html += '<a href="' + h.href + '">' + h.tag + '<span>' + h.label + '</span><span class="crumb">' + h.sub + "</span></a>";
+  });
+  box.innerHTML = html;
+  box.hidden = false;
+}
+
+function attachSearch(input, box) {
+  input.addEventListener("input", () => renderResults(doSearch(input.value), box));
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      const first = box.querySelector("a");
+      if (first) { location.hash = first.getAttribute("href"); input.value = ""; box.hidden = true; }
+    }
+    if (e.key === "Escape") { box.hidden = true; }
+  });
+  document.addEventListener("click", e => {
+    if (!box.parentElement.contains(e.target)) box.hidden = true;
+  });
+}
+
+/* ---------------- views ---------------- */
+
+function areaCard(a) {
+  const items = [];
+  a.temaer.forEach(t => items.push({ title: t.title, href: "#/tema/" + a.id + "/" + t.id }));
+  const shown = items.slice(0, 5);
+  return '<article class="card">' +
+    '<div class="cardhead"><span class="chip">' + smiley + "</span>" +
+    '<h3><a href="#/omrade/' + a.id + '">' + a.title + "</a></h3></div>" +
+    '<ul class="linklist">' + shown.map(i => '<li><a href="' + i.href + '"><span class="arrow">→</span>' + i.title + "</a></li>").join("") + "</ul>" +
+    '<div class="more"><a href="#/omrade/' + a.id + '">Åpne området →</a>' +
+    (items.length > shown.length ? ' <span>(' + items.length + " temasider)</span>" : "") + "</div>" +
+    "</article>";
+}
+
+function viewHome() {
+  return '' +
+  '<section class="hero"><h1>Dataforeningen Ressursportal</h1>' +
+  '<p>Din komplette verktøykasse for faggrupper, styrer og ildsjeler.</p></section>' +
+  '<div class="photostrip" aria-hidden="true"><div class="ph1"></div><div class="ph2"></div><div class="ph3"></div><div class="ph4"></div></div>' +
+  '<div class="shell"><div class="bigsearch">' + searchsvg +
+  '<input type="search" id="bigsearch-input" placeholder="Søk etter maler, veiledninger og dokumenter …" aria-label="Søk i ressursportalen">' +
+  '<div class="results" id="bigsearch-results" hidden></div></div></div>' +
+  '<section class="section"><div class="shell">' +
+  '<h2>Verktøykasse fra A til Å</h2>' +
+  '<p class="sub">Alt du trenger til styrearbeid, markedsføring og gjennomføring av konferanser og nettverksmøter. Områdene administreres av Dataforeningen — uten utvikler.</p>' +
+  '<div class="cardgrid">' + AREAS.map(areaCard).join("") + "</div>" +
+  "</div></section>" +
+  '<section class="statement alt section"><h2>Teknologi utvikler vi best sammen</h2><p>Siden 1953</p></section>' +
+  '<section class="section"><div class="shell"><div class="ctagrid">' +
+  '<div class="cta"><span class="chip">' + smiley + '</span><div><strong>Vi deler for å skape verdi</strong><p>Sammen bygger vi kunnskap, nettverk og muligheter.</p></div></div>' +
+  '<div class="cta"><span class="chip">' + smiley + '</span><div><strong>Har du tips til innhold eller savner noe?</strong><p><a href="#/tema/bidra/foresla">Ta kontakt</a> — sammen gjør vi ressursportalen enda bedre!</p></div></div>' +
+  "</div></div></section>";
+}
+
+function viewArea(areaId) {
+  const a = getArea(areaId);
+  if (!a) return viewHome();
+  return '<div class="shell"><div class="pagehead">' +
+    crumbs([{ label: "Hjem", href: "#/" }, { label: "Ressursportal", href: "#/" }, { label: a.title }]) +
+    "<h1>" + a.title + "</h1>" +
+    '<p class="intro">' + a.blurb + "</p></div>" +
+    '<div class="temagrid">' + a.temaer.map(t =>
+      '<article class="card"><div class="cardhead"><span class="chip">' + smiley + "</span>" +
+      '<h3><a href="#/tema/' + a.id + "/" + t.id + '">' + t.title + "</a></h3></div>" +
+      '<p style="font-size:0.92rem;color:var(--muted)">' + t.intro + "</p>" +
+      '<div class="more"><a href="#/tema/' + a.id + "/" + t.id + '">Åpne temasiden →</a> <span>(' + t.docs.length + (t.docs.length === 1 ? " ressurs" : " ressurser") + ")</span></div></article>"
+    ).join("") + "</div>" +
+    '<a class="backlink" href="#/">← Til forsiden</a>' +
+    "</div>";
+}
+
+function viewTema(areaId, temaId) {
+  const a = getArea(areaId), t = getTema(areaId, temaId);
+  if (!t) return viewHome();
+  const rel = (t.related || []).map(r => {
+    const [ra, rt] = r.split("/");
+    const tt = getTema(ra, rt);
+    return tt ? '<li><a href="#/tema/' + ra + "/" + rt + '"><span class="arrow">→</span>' + tt.title + "</a></li>" : "";
+  }).join("");
+  return '<div class="shell"><div class="pagehead">' +
+    crumbs([{ label: "Hjem", href: "#/" }, { label: "Ressursportal", href: "#/" }, { label: a.title, href: "#/omrade/" + a.id }, { label: t.title }]) +
+    "<h1>" + t.title + "</h1>" +
+    '<p class="intro">' + t.intro + "</p>" +
+    '<p class="metaline">Sist oppdatert: ' + t.updated + '<span class="dot">·</span>Innholdseier: ' + t.owner + '<span class="dot">·</span>Kontakt: <a href="#/tema/bidra/foresla">gi tilbakemelding</a></p>' +
+    "</div>" +
+    '<h2 style="font-size:1.2rem;margin-top:1.75rem">Dokumenter og skjemaer</h2>' +
+    '<ul class="doclist">' + t.docs.map(d =>
+      '<li><a class="docrow" href="#/dok/' + a.id + "/" + t.id + "/" + d.id + '">' + badge(d.type) +
+      '<span class="title">' + d.title + '</span><span class="open">Åpnes i portalen →</span></a></li>'
+    ).join("") + "</ul>" +
+    (rel ? '<h2 style="font-size:1.2rem;margin-top:2rem">Relaterte ressurser</h2><ul class="linklist" style="margin-top:0.75rem">' + rel + "</ul>" : "") +
+    '<div class="feedback"><span class="chip">' + smiley + '</span><div><strong>Savner du noe på denne siden?</strong>' +
+    '<p><a href="#/tema/bidra/foresla">Send oss et tips</a> — innholdet vedlikeholdes av ' + t.owner.toLowerCase() + " og oppdateres uten utvikler.</p></div></div>" +
+    '<a class="backlink" href="#/omrade/' + a.id + '">← Tilbake til ' + a.title + "</a>" +
+    "</div>";
+}
+
+function viewDoc(areaId, temaId, docId) {
+  const a = getArea(areaId), t = getTema(areaId, temaId);
+  const d = t && t.docs.find(x => x.id === docId);
+  if (!d) return viewHome();
+  const isForm = d.type === "Forms";
+  const preview = isForm
+    ? '<div class="fakepage fakeform"><h2>' + d.title + "</h2>" +
+      '<p style="font-size:0.9rem;color:var(--muted)">Microsoft Forms — innebygd i portalen (KR-26).</p>' +
+      "<label>Navn</label><div class=\"field\"></div>" +
+      "<label>E-post</label><div class=\"field\"></div>" +
+      "<label>Hva vil du bidra med eller foreslå?</label><div class=\"field tall\"></div>" +
+      '<div style="margin-top:1.5rem"><span class="btn btn-dark" aria-hidden="true">Send inn</span></div></div>'
+    : '<div class="fakepage"><h2>' + d.title + "</h2>" +
+      '<div class="line w95"></div><div class="line w88"></div><div class="line w95"></div><div class="line w75"></div>' +
+      '<div class="line w40" style="margin-top:1.6rem"></div>' +
+      '<div class="line w95"></div><div class="line w88"></div><div class="line w60"></div>' +
+      '<div class="line w40" style="margin-top:1.6rem"></div>' +
+      '<div class="line w88"></div><div class="line w95"></div><div class="line w75"></div></div>';
+  return '<div class="shell"><div class="pagehead">' +
+    crumbs([{ label: "Hjem", href: "#/" }, { label: a.title, href: "#/omrade/" + a.id }, { label: t.title, href: "#/tema/" + a.id + "/" + t.id }, { label: d.title }]) +
+    "<h1>" + d.title + "</h1></div>" +
+    '<div class="viewerbar">' +
+    '<a class="btn btn-line" href="#/tema/' + a.id + "/" + t.id + '">← Tilbake til ' + t.title + "</a>" +
+    (isForm ? "" : '<button class="btn btn-dark" type="button" data-action="lastned" data-type="' + d.type + '">Last ned original (' + d.type + ")</button>") +
+    '<span class="note">' + (isForm
+      ? "Skjemaet er bygget inn — brukeren mister ikke portalen."
+      : "Forhåndsvisning i portalen. Originalen ligger i SharePoint og hentes serverside via Graph — hovedmeny og tilbakeknapp beholdes.") + "</span>" +
+    "</div>" +
+    '<div class="stage">' + preview + "</div>" +
+    "</div>";
+}
+
+function viewFaggrupper() {
+  return '<div class="shell"><div class="pagehead">' +
+    crumbs([{ label: "Hjem", href: "#/" }, { label: "Faggrupper" }]) +
+    "<h1>Faggrupper</h1>" +
+    '<p class="intro">Innmelding og utmelding i faggrupper og fagstyrer håndteres i StyreWeb — portalen peker deg til riktig sted (KR-08).</p></div>' +
+    '<div class="infobox">Trykk <strong>Mitt medlemskap</strong> øverst for å administrere faggruppene dine i StyreWeb. Ressursene for å <em>drive</em> en faggruppe finner du i <a href="#/omrade/drive-faggruppe">Slik driver du en faggruppe</a> og <a href="#/omrade/faggrupper-ressurs">Faggrupper</a>.</div>' +
+    '<p style="max-width:44rem;color:var(--muted)">I fase 2 kan portalen gi personlige gruppeforslag basert på interessene dine — prinsippet er allerede demonstrert i en kjørende PoC (se beslutningsunderlaget).</p>' +
+    '<a class="backlink" href="#/">← Til forsiden</a></div>';
+}
+
+function viewArrangementer() {
+  return '<div class="shell"><div class="pagehead">' +
+    crumbs([{ label: "Hjem", href: "#/" }, { label: "Arrangementer" }]) +
+    "<h1>Arrangementer</h1>" +
+    '<p class="intro">Arrangementer og påmelding ligger på dataforeningen.no og i Checkin. Dette menypunktet er med for å vise den globale navigasjonen fra designskissen (nivå 1).</p></div>' +
+    '<div class="infobox">Skal du <em>arrangere</em> noe selv? Se <a href="#/omrade/nettverksmoter">Nettverksmøter</a> og <a href="#/omrade/konferanser">Slik arrangerer vi konferanser</a>.</div>' +
+    '<a class="backlink" href="#/">← Til forsiden</a></div>';
+}
+
+function viewOm() {
+  const rows = [
+    ["Innloggingsflyt: DND.no → StyreWeb SSO → API-sjekk, med avvisning av ikke-aktivt medlem", "KR-01–05, NFR-07", "T-01, T-02"],
+    ["Forside med hero, toppmeny, søk, ressurskort og footer (etter Heges skisse)", "KR-09", "—"],
+    ["11 ressursområder fra kravspec kap. 10 som startstruktur", "KR-10", "T-04*"],
+    ["Temasider med intro, dokumenter, skjemaer, relaterte ressurser og kontakt", "KR-13–15", "—"],
+    ["Dokumentvisning inne i portalen, filtypemerking og nedlasting", "KR-16–19", "T-03"],
+    ["Fast toppmeny, brødsmulesti og tilbake uten konteksttap", "KR-20–22", "—"],
+    ["Globalt søk i områder, temasider og dokumenttitler + søkeord — prøv «budsjettmal»", "KR-23–25", "T-07"],
+    ["Forms bygget inn på temaside og i dokumentvisning", "KR-26", "T-05"],
+    ["Booking som veiledning (PDF), ikke teknisk funksjon", "KR-27", "—"],
+    ["«Mitt medlemskap»-knapp med StyreWeb-forklaring", "KR-07–08", "T-06"],
+    ["Responsiv på mobil og desktop", "KR-31–32, NFR-03", "T-08"],
+    ["Kvalitetsgrep utenfor krav: «Sist oppdatert» + innholdseier + tilbakemeldingslenke per temaside", "—", "—"]
+  ];
+  return '<div class="shell"><div class="pagehead">' +
+    crumbs([{ label: "Hjem", href: "#/" }, { label: "Om prototypen" }]) +
+    "<h1>Om prototypen</h1>" +
+    '<p class="intro">Klikkbar skisse av ressursportalens MVP, bygget som én statisk HTML-fil. Formålet er felles referanse for design (Yvonne), innhold (Hege) og struktur/adferd (Team Bergen) — ikke å foregripe teknologivalget.</p></div>' +
+    '<div class="infobox"><strong>Test brukerreise 7.1 (tre klikk):</strong> Forside → Administrasjon av lokallag og faggrupper → Protokoller og møtereferat → <em>Mal for protokoll</em>. Dokumentet åpnes inne i portalen med navigasjonen intakt.</div>' +
+    '<div class="tablewrap"><table><tr><th>Prototypen viser</th><th>Krav</th><th>Test</th></tr>' +
+    rows.map(r => "<tr><td>" + r[0] + '</td><td><span class="kr">' + r[1] + '</span></td><td><span class="kr">' + r[2] + "</span></td></tr>").join("") +
+    "</table></div>" +
+    '<p style="margin-top:1rem;font-size:0.85rem;color:var(--muted)">* T-04 (opprette nytt ressursområde uten kodeendring) er et admin-krav som løses av CMS-valget — i prototypen er strukturen datadrevet (én JS-liste), som illustrerer prinsippet.</p>' +
+    "<h2 style=\"font-size:1.3rem;margin-top:2.5rem\">Forbehold</h2>" +
+    "<ul style=\"max-width:44rem\">" +
+    "<li>Alt innhold, alle dokumenter og datoer er plassholdere.</li>" +
+    "<li>Design: Figma (Yvonne) er styrende — dette er Heges skisse omsatt til klikkbar form.</li>" +
+    "<li>SSO, StyreWeb-API og SharePoint/Graph er simulert. Innloggingen demonstrerer flyten, ikke sikkerheten (KR-06 auto-utlogging og NFR-07 kryptering hører til den ekte løsningen).</li>" +
+    "<li>Prototypen impliserer ikke teknologivalg — den er rammeverksfri med vilje.</li>" +
+    "</ul>" +
+    '<a class="backlink" href="#/">← Til forsiden</a></div>';
+}
+
+/* ---------------- router ---------------- */
+
+const app = $("#app");
+
+function setNav(route) {
+  $$("nav.mainnav a").forEach(a => a.removeAttribute("aria-current"));
+  const key = route === "" ? "hjem" : route;
+  const el = $('nav.mainnav a[data-nav="' + key + '"]');
+  if (el) el.setAttribute("aria-current", "page");
+}
+
+function render() {
+  const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+  let html, navkey = "";
+  if (!parts.length) { html = viewHome(); navkey = "hjem"; }
+  else if (parts[0] === "omrade") html = viewArea(parts[1]);
+  else if (parts[0] === "tema") html = viewTema(parts[1], parts[2]);
+  else if (parts[0] === "dok") html = viewDoc(parts[1], parts[2], parts[3]);
+  else if (parts[0] === "faggrupper") { html = viewFaggrupper(); navkey = "faggrupper"; }
+  else if (parts[0] === "arrangementer") { html = viewArrangementer(); navkey = "arrangementer"; }
+  else if (parts[0] === "om") html = viewOm();
+  else { html = viewHome(); navkey = "hjem"; }
+  app.innerHTML = html;
+  setNav(navkey);
+  $("#mainnav").classList.remove("open");
+  $("#menubtn").setAttribute("aria-expanded", "false");
+  window.scrollTo(0, 0);
+  const big = $("#bigsearch-input");
+  if (big) attachSearch(big, $("#bigsearch-results"));
+}
+
+window.addEventListener("hashchange", render);
+
+/* ---------------- header interactions ---------------- */
+
+attachSearch($("#headsearch-input"), $("#headsearch-results"));
+
+$("#menubtn").addEventListener("click", () => {
+  const nav = $("#mainnav");
+  const open = nav.classList.toggle("open");
+  $("#menubtn").setAttribute("aria-expanded", String(open));
+});
+
+/* toast */
+let toastTimer;
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 3200);
+}
+
+document.addEventListener("click", e => {
+  const dl = e.target.closest("[data-action='lastned']");
+  if (dl) { toast("I den ekte portalen lastes originalen (" + dl.dataset.type + ") ned fra SharePoint her."); }
+  const mm = e.target.closest("[data-action='medlemskap']");
+  if (mm) { e.preventDefault(); openModal("medlemskap"); }
+});
+
+/* ---------------- modals ---------------- */
+
+function openModal(id) { $("#" + id).hidden = false; }
+function closeModal(id) { $("#" + id).hidden = true; }
+
+$("#medlemskapbtn").addEventListener("click", () => openModal("medlemskap"));
+$$("[data-close]").forEach(b => b.addEventListener("click", () => closeModal(b.dataset.close)));
+$("#tilstyreweb").addEventListener("click", () => {
+  closeModal("medlemskap");
+  toast("I den ekte portalen åpnes medlemskortet ditt i StyreWeb her (KR-07).");
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { closeModal("medlemskap"); $$(".results").forEach(r => { r.hidden = true; }); }
+});
+$$(".overlay").forEach(o => o.addEventListener("click", e => {
+  if (e.target === o && o.id === "medlemskap") closeModal("medlemskap");
+}));
+
+/* ---------------- login demo ---------------- */
+
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function setUser(name) {
+  $("#username").textContent = name + " · aktivt medlem";
+  $("#userchip").hidden = false;
+}
+
+function resetLogin() {
+  $("#login-choices").hidden = false;
+  $("#ssosteps").hidden = true;
+  $("#loginerror").hidden = true;
+  $$("#ssosteps li").forEach(li => li.classList.remove("done", "fail"));
+}
+
+function runLogin(kind) {
+  $("#login-choices").hidden = true;
+  $("#ssosteps").hidden = false;
+  const steps = $$("#ssosteps li");
+  const delay = reduceMotion ? 0 : 700;
+  steps.forEach((li, i) => {
+    setTimeout(() => {
+      const failHere = kind === "inaktiv" && i === 2;
+      li.classList.add(failHere ? "fail" : "done");
+      if (failHere) {
+        li.lastChild.textContent = "Medlemskapet er ikke aktivt (StyreWeb-API).";
+        $("#loginerror").hidden = false;
+      }
+      if (i === 2 && kind === "aktiv") {
+        setTimeout(() => {
+          setUser("Kari Nordmann");
+          closeModal("login");
+          toast("Velkommen inn, Kari! Aktivt medlemskap bekreftet.");
+        }, reduceMotion ? 0 : 500);
+      }
+    }, delay * (i + 1));
+  });
+}
+
+$$("[data-login]").forEach(b => b.addEventListener("click", () => runLogin(b.dataset.login)));
+$("#retrylogin").addEventListener("click", resetLogin);
+$("#skiplogin").addEventListener("click", () => { setUser("Demo-bruker"); closeModal("login"); });
+$("#logoutbtn").addEventListener("click", () => {
+  $("#userchip").hidden = true;
+  resetLogin();
+  openModal("login");
+});
+
+/* ---------------- boot ---------------- */
+
+render();
+
+let seen = false;
+try { seen = sessionStorage.getItem("dnd-proto-login") === "1"; } catch (err) { /* sandbox uten storage */ }
+if (!seen) {
+  openModal("login");
+  try { sessionStorage.setItem("dnd-proto-login", "1"); } catch (err) { /* ignorer */ }
+} else {
+  setUser("Kari Nordmann");
+}
+</script>
