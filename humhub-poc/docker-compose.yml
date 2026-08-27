@@ -30,6 +30,9 @@ services:
       HUMHUB_CONFIG__COMPONENTS__DB__DSN: "mysql:host=db;dbname=humhub"
       HUMHUB_CONFIG__COMPONENTS__DB__USERNAME: humhub
       HUMHUB_CONFIG__COMPONENTS__DB__PASSWORD: humhub-poc-db-2026
+      # Sanntidspush (Mercure) av: hub-selvkallet henger etter baseUrl-endring
+      # (PoC bak host-gateway). Live-oppdateringer går via polling i stedet.
+      HUMHUB_DOCKER__MERCURE_ENABLE: "false"
     volumes:
       - humhub-data:/data
     # SSO-PoC: nå Keycloak (port 8084 på verten) på nettleserens adresse.

@@ -122,3 +122,15 @@ clientSecret humhub-sso-poc-2026, realm dataforeningen,
 baseUrl http://minibedrift.mshome.net:8084, usernameMapper preferred_username,
 title Dataforeningen-ID). `extra_hosts: host-gateway` i compose lar containeren nå
 IdP-en på nettleserens adresse. Lokale passord virker fortsatt (PoC).
+
+## REST-API + faggruppefane i portalen (27.08.2026, B16)
+
+- **REST-modulen** er installert og aktivert (`module/install rest`), basic auth på
+  (`settings/set rest enableBasicAuth 1`, `enabledForAllUsers 1`). Portalens plugin
+  `dnd-faggrupper` bruker API-et serverside: Følg/Meld av i portalens faggruppefane
+  virker umiddelbart mot spacene her.
+- **To PoC-feller løst for skrivehandlinger:** (1) e-post uten SMTP ga heng →
+  `useFileTransport` i `/data/config/common.php` (deployes med
+  `docker compose cp` av oppdatert fil ved reetablering); (2) Mercure-push ga
+  60 s heng + 500 ved medlemsfjerning → slått av med
+  `HUMHUB_DOCKER__MERCURE_ENABLE: "false"` i compose (live-oppdateringer = polling).
