@@ -20,7 +20,8 @@ services:
       retries: 20
 
   humhub:
-    image: humhub/humhub:1.18.4
+    build: .
+    image: humhub-dnd:1.18.4
     restart: unless-stopped
     ports:
       - "8080:80"
@@ -31,6 +32,9 @@ services:
       HUMHUB_CONFIG__COMPONENTS__DB__PASSWORD: humhub-poc-db-2026
     volumes:
       - humhub-data:/data
+    # SSO-PoC: nå Keycloak (port 8084 på verten) på nettleserens adresse.
+    extra_hosts:
+      - "minibedrift.mshome.net:host-gateway"
     depends_on:
       db:
         condition: service_healthy

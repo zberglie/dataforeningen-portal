@@ -107,3 +107,18 @@ Tilbake til standardtema: `php yii theme/switch HumHub`.
 **Det PoC-en bevisst ikke viser** (venter på StyreWeb-avklaringen): felles
 OIDC-innlogging (én pålogging på tvers) og medlemskapssynk StyreWeb → spaces.
 Arkitekturen for begge er beskrevet i samtaleloggen/fase 2-underlaget.
+
+## Felles innlogging med portalen (27.08.2026)
+
+HumHub er nå OIDC-klient av dev-identitetsleverandøren (Keycloak, port 8084 — se
+`dnd-ressursportal/sso/` og `docs/06-innlogging-sso.md` der). Knappen
+**«Dataforeningen-ID»** på innloggingssiden logger inn via Keycloak; er du allerede
+innlogget i portalen, kommer du rett inn uten passord (SSO). Kontoer lenkes på e-post
+(kari@dnd-poc.local osv.); demobrukernes SSO-passord er `DndSso2026!`.
+
+Teknisk: offisiell modul `auth-keycloak` (krever BCMath → `Dockerfile`-overlegget),
+konfigurert med `php yii settings/set auth-keycloak …` (enabled 1, clientId humhub,
+clientSecret humhub-sso-poc-2026, realm dataforeningen,
+baseUrl http://minibedrift.mshome.net:8084, usernameMapper preferred_username,
+title Dataforeningen-ID). `extra_hosts: host-gateway` i compose lar containeren nå
+IdP-en på nettleserens adresse. Lokale passord virker fortsatt (PoC).
